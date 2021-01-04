@@ -2,10 +2,10 @@
   "compilerOptions": {
 
     "target": "esnext",
+    "module": "CommonJS",
     "moduleResolution": "Node",
-    
-    "outFile": "./dist.js",
-    // "outDir": "dist",
+
+    "outDir": "dist",
     "rootDir": "src",
 
     "strict": true,
