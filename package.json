@@ -1,0 +1,19 @@
+{
+  "name": "cclient",
+  "version": "1.0.0",
+  "description": "A Minecraft client that interfaces through ComputerCraft turtles.",
+  "main": "index.js",
+  "scripts": {
+    "test": "tsc --noEmit",
+    "build": "tsc"
+  },
+  "engines": {
+    "node": "12.x"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^4.1.3"
+  }
+}
