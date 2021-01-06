@@ -2,10 +2,11 @@
   "name": "cclient",
   "version": "1.0.0",
   "description": "A Minecraft client that interfaces through ComputerCraft turtles.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "tsc --noEmit",
-    "build": "tsc"
+    "build": "tsc && cp -f src/index.html dist && cp -f src/server.html dist",
+    "start": "electron ."
   },
   "engines": {
     "node": "12.x"
@@ -14,10 +15,15 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/react-dom": "^17.0.0",
     "@types/ws": "^7.4.0",
     "typescript": "^4.1.3"
   },
   "dependencies": {
+    "@material-ui/core": "^4.11.2",
+    "electron": "^11.1.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
     "ws": "^7.4.2"
   }
 }

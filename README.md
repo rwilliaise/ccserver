@@ -2,8 +2,18 @@
 
 Run a webserver to control turtles
 
-## TODO: Numbered by priority
+## TODO list
 - [x] Host a server
-- [ ] Get turtles working
-- [ ] Process clients and differentiate between turtles and interfacing clients
-
+- [x] Get turtles working
+- [x] Process clients and differentiate between turtles and interfacing clients
+- [x] Inventory scanning
+- [x] Shared network-wide inventory
+- [x] Electron app
+- [ ] UI interface
+- [ ] Check for peripherals
+- [ ] Have a world representation both on server and client, frequently updates
+- [ ] Scan nearby world with plethora block scanner
+- [ ] Interface with inventories
+- [ ] Automatically craft items
+- [ ] Each turtle has a goal
+- [ ] Server has an end goal

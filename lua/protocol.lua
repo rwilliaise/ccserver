@@ -6,12 +6,16 @@ local function send(data)
 end
 
 local function getResponse()
-	local response = websocket.receive()
+	local response = _G.websocket.receive()
 	if response == nil then
 		return { id = -1, code = 500, err = "Server closed" }
 	end
 	return textutils.unserialiseJSON(response)
 end
+
+-- Every turtle has a glimpse of the current state of the network.
+local network = {}
+network.items = {}
 
 local protocol = {}
 protocol.VERSION = 2
@@ -37,6 +41,7 @@ function protocol.receive()
 	end
 end
 
+-- error packet
 protocol.MAP[-1] = function(data)
 	error("Received code " .. data.code .. ", error: " .. (data.err or "none provided"))
 	if data.fatal then
@@ -44,6 +49,7 @@ protocol.MAP[-1] = function(data)
 	end
 end
 
+-- connection ping packet
 protocol.MAP[0] = function(data)
 	if not data or data.code ~= 200 then
 		error(data.err)
@@ -52,8 +58,25 @@ protocol.MAP[0] = function(data)
 	print("Successfully connected to " .. _G.serverURL .. "!")
 end
 
+-- data request packet
 protocol.MAP[1] = function(data)
-	turtle.forward()
+	if data.type == "update" then -- nothing to be sent back
+		network.items = data.items or network.items
+		print(textutils.serialize(network.items))
+	end
+	if data.type == "item" then -- item update
+		local items = {}
+		for i = 1, 16 do
+			items[tostring(i)] = turtle.getItemDetail(i)
+		end
+		send({ id = 1, data = items, type = "item" })
+	end
+end
+
+-- lua packet
+protocol.MAP[2] = function(data)
+	if not data.lua then return end
+	load(data.lua)()
 end
 
 return protocol
