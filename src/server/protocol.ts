@@ -47,6 +47,9 @@ export class Client {
 export class Turtle extends Client {
 
 	peripherals: Peripheral[] = [];
+	x: number = 0;
+	y: number = 0;
+	z: number = 0;
 
 	constructor(socket: WebSocket) {
 		super("turtle", socket);
@@ -91,13 +94,19 @@ export function sendUpdate(client: Client) {
 	send(client, { id: 1, type: "update", items: TurtleNetwork.items });
 }
 
-function processDataPacket(client: Client, data: { type: "item", data: any }) {
+function processDataPacket(client: Client, data: { type: "item" | "position", data: any }) {
 	if (data.type === "item") {
 		const out: Item[] = [];
 		for (const key in data.data) {
 			out[parseInt(key)] = data.data[key];
 		}
 		TurtleNetwork.setInventory(client.id, out);
+	}
+	if (data.type === "position" && data.data.x) {
+		const turtle = client as Turtle;
+		turtle.x = data.data.x;
+		turtle.y = data.data.y;
+		turtle.z = data.data.z;
 	}
 }
 

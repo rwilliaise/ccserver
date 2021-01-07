@@ -2,6 +2,8 @@ export type Item = { count: number, nbtHash?: string, name: string, damage: numb
 
 export class Network {
 
+	world: number[][][] = [];
+
 	_items: Item[][] = [];
 	_cache?: Item[];
 
