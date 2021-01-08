@@ -56,6 +56,7 @@ protocol.MAP[0] = function(data)
 		return true
 	end
 	print("Successfully connected to " .. _G.serverURL .. "!")
+	send({ id = 1, data = { }, type = "item" })
 end
 
 -- data request packet

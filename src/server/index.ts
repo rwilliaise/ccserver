@@ -1,20 +1,15 @@
 import WebSocket from "ws";
-import {Client, processIdPacket, PROTOCOL_MAP, sendDetection, sendUpdate, TurtleNetwork} from "./protocol";
-import assert from "assert";
-
-const readline = require("readline").createInterface({
-	input: process.stdin
-});
+import { Client, processIdPacket, PROTOCOL_MAP, sendDetection, sendUpdate, TurtleNetwork } from "./protocol";
+import { ipcRenderer } from "electron";
 
 const server = new WebSocket.Server({ port: 8080 }); // host on local machine
 
 server.on("connection", (client) => {
-
 	let functioningClient: Client | null = null;
 
 	client.on("message", (msg) => {
 		if (typeof msg !== "string") {
-			client.send(JSON.stringify({ code: 400, err: "Unsupported format!" }))
+			client.send(JSON.stringify({ code: 400, err: "Unsupported format!" }));
 		}
 		const data = JSON.parse(msg as string);
 		if (data === undefined || data.id === undefined) {
@@ -39,18 +34,12 @@ server.on("connection", (client) => {
 		if (functioningClient && functioningClient.id) {
 			TurtleNetwork.removeInventory(functioningClient.id);
 		}
-		Client.clients = Client.clients.filter(s => s.socket !== client);
+		Client.clients = Client.clients.filter((s) => s.socket !== client);
 	});
 });
 
-readline.on("line", (input: string) => {
-	if (input.includes("scan")) {
+ipcRenderer.on("main-update", (event, args) => {
+	if (args.type === "scan") {
 		Client.clients.forEach(sendDetection);
-	}
-	if (input.includes("update")) {
-		Client.clients.forEach(sendUpdate);
-	}
-	if (input.includes("check")) {
-		console.log(TurtleNetwork.items);
 	}
 });

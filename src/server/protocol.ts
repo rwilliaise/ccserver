@@ -1,7 +1,8 @@
 import WebSocket from "ws";
-import {Item, Network} from "./network";
+import { Item, Network } from "./network";
+import { ipcRenderer } from "electron";
 
-function send(client: WebSocket | Client, data: { id: number, [k: string]: any }) {
+function send(client: WebSocket | Client, data: { id: number; [k: string]: any }) {
 	const stringify = JSON.stringify(data);
 	client.send(stringify);
 }
@@ -18,7 +19,6 @@ export enum Peripheral {
 }
 
 export class Client {
-
 	static clients: Client[] = [];
 
 	socket: WebSocket;
@@ -38,18 +38,17 @@ export class Client {
 	}
 
 	static broadcast(data: any) {
-		Client.clients.forEach(client => {
+		Client.clients.forEach((client) => {
 			client.send(data);
 		});
 	}
 }
 
 export class Turtle extends Client {
-
 	peripherals: Peripheral[] = [];
-	x: number = 0;
-	y: number = 0;
-	z: number = 0;
+	x = 0;
+	y = 0;
+	z = 0;
 
 	constructor(socket: WebSocket) {
 		super("turtle", socket);
@@ -63,7 +62,7 @@ export const PROTOCOL_VERSION = 2; // required so it doesn't crash and burn when
 // Client-to-server invocations.
 export const PROTOCOL_MAP = new Map<number, packetProtocol>();
 
-export function processIdPacket(client: WebSocket, data: { pv: number, type: ClientType }) {
+export function processIdPacket(client: WebSocket, data: { pv: number; type: ClientType }): Client | null {
 	console.log(`Received connection with protocol version ${data.pv} and is a ${data.type}`);
 	if (PROTOCOL_VERSION !== data.pv) {
 		send(client, { code: 405, id: -1, err: `Invalid protocol version! Requires version ${PROTOCOL_VERSION}` });
@@ -86,7 +85,7 @@ export function processIdPacket(client: WebSocket, data: { pv: number, type: Cli
 	return null;
 }
 
-export function sendDetection(client: Client) {
+export function sendDetection(client: Client): void {
 	send(client, { id: 1, type: "item" });
 }
 
@@ -94,13 +93,14 @@ export function sendUpdate(client: Client) {
 	send(client, { id: 1, type: "update", items: TurtleNetwork.items });
 }
 
-function processDataPacket(client: Client, data: { type: "item" | "position", data: any }) {
+function processDataPacket(client: Client, data: { type: "item" | "position"; data: any }) {
 	if (data.type === "item") {
 		const out: Item[] = [];
 		for (const key in data.data) {
 			out[parseInt(key)] = data.data[key];
 		}
 		TurtleNetwork.setInventory(client.id, out);
+		ipcRenderer.send("server-update", { type: "item", data: TurtleNetwork.items });
 	}
 	if (data.type === "position" && data.data.x) {
 		const turtle = client as Turtle;

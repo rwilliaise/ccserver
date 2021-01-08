@@ -4,27 +4,39 @@ import {
 	Container,
 	CssBaseline,
 	Grid,
-	makeStyles, Paper, Table, TableBody, TableCell, TableHead, TableRow
+	makeStyles,
+	Paper,
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableRow,
+	Typography,
 } from "@material-ui/core";
 import clsx from "clsx";
-import {Title} from "@material-ui/icons";
+import { Items } from "./items";
 
 const styles = makeStyles((theme) => ({
 	root: {
-		display: "flex"
+		display: "flex",
 	},
 	content: {
 		flexGrow: 1,
-		overflow: "auto"
+		overflow: "auto",
 	},
 	paper: {
 		padding: theme.spacing(2),
-		display: 'flex',
-		overflow: 'auto',
-		flexDirection: 'column',
+		display: "flex",
+		flexDirection: "column",
+	},
+	title: {
+		display: "flex",
+	},
+	titlebutton: {
+		marginInline: theme.spacing(1),
 	},
 	table: {
-		marginBottom: theme.spacing(2)
+		marginBottom: theme.spacing(2),
 	},
 	fixedHeight: {
 		height: 240,
@@ -32,7 +44,7 @@ const styles = makeStyles((theme) => ({
 	container: {
 		paddingTop: theme.spacing(4),
 		paddingBottom: theme.spacing(4),
-	}
+	},
 }));
 
 function App() {
@@ -41,29 +53,13 @@ function App() {
 
 	return (
 		<div className={classes.root}>
-			<CssBaseline/>
+			<CssBaseline />
 			<main className={classes.content}>
 				<Container maxWidth="lg" className={classes.container}>
 					<Grid container spacing={3}>
 						<Grid item xs={12}>
-							<Paper className={classes.paper}>
-								<Title>Inventory</Title>
-								<Table size="small" className={classes.table}>
-									<TableHead>
-										<TableRow>
-											<TableCell>Count</TableCell>
-											<TableCell>Name</TableCell>
-											<TableCell>Request</TableCell>
-										</TableRow>
-									</TableHead>
-									<TableBody>
-										<TableRow>
-											<TableCell>1</TableCell>
-											<TableCell>minecraft:stone</TableCell>
-											<TableCell>Request</TableCell>
-										</TableRow>
-									</TableBody>
-								</Table>
+							<Paper className={fixedHeightPaper}>
+								<Items styles={classes} />
 							</Paper>
 						</Grid>
 					</Grid>
@@ -73,4 +69,4 @@ function App() {
 	);
 }
 
-ReactDOM.render(<App/>, document.querySelector("body"));
+ReactDOM.render(<App />, document.querySelector("body"));
