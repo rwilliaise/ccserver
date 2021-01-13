@@ -1,6 +1,7 @@
 # Project exclude paths
 /node_modules/
 
+lua/.vscode
 .DS_Store
 /.idea/
 /dist/

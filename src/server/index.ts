@@ -1,11 +1,10 @@
 import WebSocket from "ws";
-import { Client, processIdPacket, PROTOCOL_MAP, sendDetection, sendUpdate, TurtleNetwork } from "./protocol";
+import { Turtle, processIdPacket, PROTOCOL_MAP, sendDetection, TurtleNetwork } from "./protocol";
 import { ipcRenderer } from "electron";
-
 const server = new WebSocket.Server({ port: 8080 }); // host on local machine
 
 server.on("connection", (client) => {
-	let functioningClient: Client | null = null;
+	let functioningClient: Turtle | null = null;
 
 	client.on("message", (msg) => {
 		if (typeof msg !== "string") {
@@ -26,7 +25,7 @@ server.on("connection", (client) => {
 			return;
 		}
 		if (functioningClient !== null) {
-			protocol(functioningClient, data);
+			protocol(functioningClient, data as never);
 		}
 	});
 
@@ -34,12 +33,16 @@ server.on("connection", (client) => {
 		if (functioningClient && functioningClient.id) {
 			TurtleNetwork.removeInventory(functioningClient.id);
 		}
-		Client.clients = Client.clients.filter((s) => s.socket !== client);
+		Turtle.clients = Turtle.clients.filter((s) => s.socket !== client);
 	});
 });
 
+setInterval(() => {
+	Turtle.clients.forEach(sendDetection);
+}, 1000);
+
 ipcRenderer.on("main-update", (event, args) => {
 	if (args.type === "scan") {
-		Client.clients.forEach(sendDetection);
+		Turtle.clients.forEach(sendDetection);
 	}
 });

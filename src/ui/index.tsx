@@ -1,20 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {
-	Container,
-	CssBaseline,
-	Grid,
-	makeStyles,
-	Paper,
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableRow,
-	Typography,
-} from "@material-ui/core";
+import { AppBar, Container, CssBaseline, Grid, IconButton, makeStyles, Paper, Toolbar } from "@material-ui/core";
 import clsx from "clsx";
 import { Items } from "./items";
+import { ipcRenderer } from "electron";
+import { Refresh } from "@material-ui/icons";
 
 const styles = makeStyles((theme) => ({
 	root: {
@@ -27,17 +17,16 @@ const styles = makeStyles((theme) => ({
 	paper: {
 		padding: theme.spacing(2),
 		display: "flex",
+		overflow: "auto",
 		flexDirection: "column",
 	},
 	title: {
 		display: "flex",
 	},
-	titlebutton: {
-		marginInline: theme.spacing(1),
-	},
 	table: {
 		marginBottom: theme.spacing(2),
 	},
+	appBarSpacer: theme.mixins.toolbar,
 	fixedHeight: {
 		height: 240,
 	},
@@ -45,7 +34,14 @@ const styles = makeStyles((theme) => ({
 		paddingTop: theme.spacing(4),
 		paddingBottom: theme.spacing(4),
 	},
+	refreshButton: {
+		marginRight: 36,
+	},
 }));
+
+function onclick(): void {
+	ipcRenderer.send("main-update", { type: "scan" });
+}
 
 function App() {
 	const classes = styles();
@@ -54,7 +50,21 @@ function App() {
 	return (
 		<div className={classes.root}>
 			<CssBaseline />
+			<AppBar>
+				<Toolbar>
+					<IconButton
+						edge="start"
+						color="inherit"
+						aria-label="refresh"
+						onClick={onclick}
+						className={classes.refreshButton}
+					>
+						<Refresh />
+					</IconButton>
+				</Toolbar>
+			</AppBar>
 			<main className={classes.content}>
+				<div className={classes.appBarSpacer} />
 				<Container maxWidth="lg" className={classes.container}>
 					<Grid container spacing={3}>
 						<Grid item xs={12}>
