@@ -18,6 +18,16 @@ export class Network {
     this._items[id] = items
   }
 
+  getInventory(id: number): Item[] {
+    return this._items[id] || []
+  }
+
+  hasItem(id: number, name: string): boolean {
+    return this.getInventory(id).some((item) => {
+      return item.name === name
+    })
+  }
+
   removeInventory(id: number): void {
     this._items.splice(id, 1)
   }

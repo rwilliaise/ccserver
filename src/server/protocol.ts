@@ -3,6 +3,7 @@ import { Item, Network, TurtleNetwork } from './network'
 import { ipcRenderer } from 'electron'
 import { Turtle } from './ai/turtle'
 import labels from './labels.json'
+import { BlockPos } from './utils'
 
 const serverLabel =
   labels.labels[Math.floor(Math.random() * labels.labels.length)]
@@ -54,6 +55,10 @@ export function sendDetection(client: Turtle): void {
 
 export function sendUpdate(client: Turtle): void {
   send(client, { id: 1, type: 'update', items: TurtleNetwork.items })
+}
+
+export function sendPathfinding(client: Turtle, position: BlockPos) {
+  send(client, { id: 3, data: position.toJson() })
 }
 
 function processDataPacket(

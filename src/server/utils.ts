@@ -28,4 +28,8 @@ export class BlockPos {
   add(other: BlockPos): BlockPos {
     return new BlockPos(this.x + other.x, this.y + other.y, this.z + other.z)
   }
+
+  toJson(): { x: number; y: number; z: number } {
+    return { x: this.x, y: this.y, z: this.z }
+  }
 }

@@ -28,8 +28,7 @@ local equipped = nil
 local ITEM_WHITELIST = {
 	["plethora:scanner"] = 0,
 	["minecraft:crafting_table"] = 1,
-	["minecraft:diamond_pickaxe"] = 2,
-	["computercraft:advanced_modem"] = 3,
+	["computercraft:advanced_modem"] = 2,
 }
 
 local function sync()
@@ -45,7 +44,7 @@ local function sync()
 		items[tostring(i)] = item
 	end
 	send({ id = 1, data = items, type = "item" })
-	if equipped == 3 then
+	if equipped == 2 then
 		local posA = gps.locate(3)
 		send({id = 1, data = posA, type = "position"})
 	end
