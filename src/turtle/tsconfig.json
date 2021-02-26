@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "rootDir": "../",
+    "baseUrl": "../",
+    "types": [
+      "typescript-to-lua/language-extensions",
+      "lua-types/5.1",
+      "cc-tweaked-type-definitions"
+    ],
+    "skipLibCheck": true,
+        
+    "strict": true,
+    "declaration": false
+  },
+  "tstl": {
+    "luaTarget": "5.1",
+    "luaBundle": "../../dist.lua",
+    "luaBundleEntry": "./index.ts",
+    "noHeader": true
+  },
+  "include": [
+    "../**/*"
+  ],
+  "exclude": [
+    "../server"
+  ]
+}

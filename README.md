@@ -3,12 +3,13 @@
 Run a webserver to control turtles
 
 ## TODO list
-- [x] Host a server
-- [x] Get turtles working
-- [x] Process clients and differentiate between turtles and interfacing clients
-- [x] Inventory scanning
-- [x] Shared network-wide inventory
-- [x] Electron app
+- [ ] Host a server
+- [ ] Get turtles working
+- [ ] Process clients and differentiate between turtles and interfacing clients
+- [ ] Inventory scanning
+- [ ] Shared network-wide inventory
+- [ ] Add a basic AI
+- [ ] ~~Electron app~~ Not now
 - [ ] UI interface
 - [ ] Check for peripherals
 - [ ] Have a world representation both on server and client, frequently updates

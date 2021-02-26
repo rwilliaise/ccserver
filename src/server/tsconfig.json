@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "rootDir": "../",
+    "baseUrl": "../",
+    "outDir": "../../dist",
+
+    "moduleResolution": "node",
+    "target": "esnext",
+
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+        
+    "strict": true,
+    "declaration": false
+  },
+  "include": [
+    "../**/*"
+  ],
+  "exclude": [
+    "../turtle"
+  ]
+}
