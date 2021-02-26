@@ -2,6 +2,7 @@
   "compilerOptions": {
     "rootDir": "../",
     "baseUrl": "../",
+    "lib": ["ESNext"],
     "types": [
       "typescript-to-lua/language-extensions",
       "lua-types/5.1",

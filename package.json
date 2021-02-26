@@ -29,6 +29,7 @@
     "typescript-to-lua": "^0.38.1"
   },
   "dependencies": {
+    "ts-promise": "^2.2.0",
     "ws": "^7.4.2"
   }
 }
