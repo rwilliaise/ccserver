@@ -1,16 +1,18 @@
+import { Packet } from "shared/packet";
+import { ClientPacketHandler } from "./connection";
 
 export class Client {
 
-  url: string;
   websocket: lWebSocket;
   listenThread: LuaThread;
+
+  packetHandler: ClientPacketHandler = new ClientPacketHandler(this);
 
   /**
    * Base constructor
    * @param url URL to open a websocket on
    */
-  constructor(url: string) {
-    this.url = url;
+  constructor(public url: string) {
     let ws = http.websocket(url)
     if (Array.isArray(ws)) {
       let [, err] = ws; // holy moly you can omit elements in a destructor
@@ -21,18 +23,24 @@ export class Client {
     this.listenThread = coroutine.create(() => {
       this.listen();
     });
+    this.packetHandler.sendConnectionCheck();
   }
 
   listen() {
     while (true) {
-      let data = this.websocket.receive();
+      const data = this.websocket.receive();
       if (data) {
-        let [strData] = data;
-        let [jsonData, err] = textutils.unserializeJSON(strData);
+        const [strData] = data;
+        const [jsonData, err] = textutils.unserializeJSON(strData);
         if (!jsonData) {
           print(`Failed to unserialize JSON! ${err}`)
+        } else if (jsonData.id) {
+          const packet = Packet.getPacket(jsonData.id);
+          if (packet) {
+            packet.process(jsonData, this.packetHandler);
+          }
         } else {
-          
+          print("Invalid packet!")
         }
       }
     }
@@ -43,5 +51,9 @@ export class Client {
    */
   start() {
     coroutine.resume(this.listenThread);
+  }
+
+  send(data: any) {
+    this.websocket.send(data, false);
   }
 }
