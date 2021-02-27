@@ -1,5 +1,5 @@
-import { Packet } from "shared/packet";
-import { ClientPacketHandler } from "./connection";
+import { Packet } from "shared/base";
+import { ClientPacketHandler } from "./handler";
 
 export class Client {
 
@@ -54,6 +54,7 @@ export class Client {
   }
 
   send(data: any) {
-    this.websocket.send(data, false);
+    const out = textutils.serializeJSON(data);
+    this.websocket.send(out, false);
   }
 }
