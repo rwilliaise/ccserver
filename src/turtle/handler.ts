@@ -1,4 +1,5 @@
-import { CONNECT_PACKET, PacketHandler } from "shared/packet";
+import { PacketHandler } from "shared/base";
+import { CONNECT_PACKET } from "shared/connection";
 import { PROTOCOL_VERSION } from "shared/utils";
 import { Client } from "./client";
 

@@ -1,4 +1,4 @@
-import { PROTOCOL_VERSION } from "../utils";
+import { PROTOCOL_VERSION } from "./utils";
 import { Packet, PacketHandler } from "./base";
 
 export class PacketConnect extends Packet {
@@ -9,7 +9,7 @@ export class PacketConnect extends Packet {
   write(handler: PacketHandler): any {
     return handler.getConnectionCheck();
   }
-  
+
   process(data: any, handler: PacketHandler): void {
     handler.handleConnection(data);
   }
