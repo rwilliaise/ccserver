@@ -1,8 +1,10 @@
+import WebSocket from "ws";
+
 export class PacketHandler {
 
-  handleConnection(data: any): void {}
-  sendConnectionCheck(): void {}
-  getConnectionCheck(): any {}
+  handleConnection(data: any, client?: WebSocket): void { }
+  sendConnectionCheck(): void { }
+  writeConnectionCheck(errorCode?: number, errorMessage?: string): any { }
 }
 
 export abstract class Packet {
@@ -11,7 +13,7 @@ export abstract class Packet {
 
   private id!: number;
 
-  abstract process(data: any, handler: PacketHandler): void;
+  abstract process(data: any, handler: PacketHandler, client?: WebSocket): void;
   abstract write(handler: PacketHandler, ...args: any[]): any;
 
   getData(handler: PacketHandler, ...args: any[]) {

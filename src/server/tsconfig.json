@@ -3,14 +3,12 @@
     "rootDir": "../",
     "baseUrl": "../",
     "outDir": "../../dist",
-
     "moduleResolution": "node",
+    "module": "commonjs",
     "target": "esnext",
-
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-        
     "strict": true,
     "declaration": false
   },

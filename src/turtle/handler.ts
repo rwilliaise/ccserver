@@ -12,15 +12,16 @@ export class ClientPacketHandler extends PacketHandler {
 
   handleConnection(data: any) {
     if (data.code !== 200) {
-      throw new ClientError(`Connection failed! ${data.err}`)
+      throw new ClientError(`Connection failed! ${data.err || "<NULL>"}`)
     }
+    print("Connected!");
   }
 
   sendConnectionCheck(): void {
     this.client.send(CONNECT_PACKET.getData(this));
   }
 
-  getConnectionCheck(): any {
+  writeConnectionCheck(): any {
     return { protocol: PROTOCOL_VERSION };
   }
 }

@@ -3,11 +3,8 @@ import { Packet, PacketHandler } from "./base";
 
 export class PacketConnect extends Packet {
 
-  /**
-   * Called from client-side for this specific packet.
-   */
-  write(handler: PacketHandler): any {
-    return handler.getConnectionCheck();
+  write(handler: PacketHandler, errorCode?: number, errorMessage?: string): any {
+    return handler.writeConnectionCheck(errorCode, errorMessage);
   }
 
   process(data: any, handler: PacketHandler): void {

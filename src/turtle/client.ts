@@ -5,7 +5,6 @@ export class Client {
 
   websocket: lWebSocket;
   listenThread: LuaThread;
-
   packetHandler: ClientPacketHandler = new ClientPacketHandler(this);
 
   /**
@@ -14,11 +13,11 @@ export class Client {
    */
   constructor(public url: string) {
     let ws = http.websocket(url)
-    if (Array.isArray(ws)) {
-      let [, err] = ws; // holy moly you can omit elements in a destructor
-      error(`Websocket client failure! ${err}`)
+    let [success, err] = (ws as unknown as [lWebSocket | false, string]);
+    if (!success) {
+      error(`Websocket client failure! ${err || "<NULL>"}`)
     } else {
-      this.websocket = ws;
+      this.websocket = success;
     }
     this.listenThread = coroutine.create(() => {
       this.listen();
@@ -30,18 +29,25 @@ export class Client {
     while (true) {
       const data = this.websocket.receive();
       if (data) {
-        const [strData] = data;
-        const [jsonData, err] = textutils.unserializeJSON(strData);
-        if (!jsonData) {
-          print(`Failed to unserialize JSON! ${err}`)
-        } else if (jsonData.id) {
-          const packet = Packet.getPacket(jsonData.id);
-          if (packet) {
-            packet.process(jsonData, this.packetHandler);
-          }
+        const [strData, binary] = data;
+        if (binary) {
+          print(`Illegal state: got a binary message! ${strData}`)
         } else {
-          print("Invalid packet!")
+          const [jsonData, err] = textutils.unserializeJSON(strData);
+          if (!jsonData) {
+            print(`Failed to unserialize JSON! ${err || "<NULL>"}`)
+          } else if (jsonData.id) {
+            const packet = Packet.getPacket(jsonData.id);
+            if (packet) {
+              packet.process(jsonData, this.packetHandler);
+            }
+          } else {
+            print("Invalid packet!");
+          }
         }
+      } else {
+        print("Server closed!");
+        coroutine.yield();
       }
     }
   }
