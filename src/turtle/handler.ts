@@ -2,14 +2,18 @@ import { PacketHandler } from "shared/base";
 import { CONNECT_PACKET } from "shared/connection";
 import { PROTOCOL_VERSION } from "shared/utils";
 import { Client } from "./client";
+import { ClientError } from "./utils";
 
 export class ClientPacketHandler extends PacketHandler {
 
-  private readonly client: Client;
-
-  public constructor(client: Client) {
+  public constructor(private readonly client: Client) {
     super();
-    this.client = client;
+  }
+
+  handleConnection(data: any) {
+    if (data.code !== 200) {
+      throw new ClientError(`Connection failed! ${data.err}`)
+    }
   }
 
   sendConnectionCheck(): void {

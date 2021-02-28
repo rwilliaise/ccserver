@@ -6,7 +6,7 @@ export class Server {
 
   websocket: WebSocket.Server;
 
-  handler: ServerPacketHandler = new ServerPacketHandler();
+  handler: ServerPacketHandler = new ServerPacketHandler(this);
 
   constructor() {
     this.websocket = new WebSocket.Server({ port: 8080 });
@@ -24,9 +24,9 @@ export class Server {
         const object = JSON.parse(data);
         let packet;
         if (object.id && (packet = Packet.getPacket(object.id))) {
-          packet.process(object);
+          packet.process(object, this.handler);
         }
       }
-    })
+    });
   }
 }
