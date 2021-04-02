@@ -1,27 +1,26 @@
-import { PacketHandler } from "shared/base";
-import { CONNECT_PACKET } from "shared/connection";
-import { PROTOCOL_VERSION } from "shared/utils";
-import { Client } from "./client";
-import { ClientError } from "./utils";
+import { NetHandler } from 'shared/base'
+import { PacketConnect } from 'shared/connection'
+import { PROTOCOL_VERSION } from 'shared/utils'
+import { Client } from './client'
+import { ClientError } from './utils'
 
-export class ClientPacketHandler extends PacketHandler {
-
+export class ClientNetHandler extends NetHandler {
   public constructor(private readonly client: Client) {
-    super();
+    super()
   }
 
   handleConnection(data: any) {
     if (data.code !== 200) {
-      throw new ClientError(`Connection failed! ${data.err || "<NULL>"}`)
+      throw new ClientError(`Connection failed! ${data.err || '<NULL>'}`)
     }
-    print("Connected!");
+    print('Connected!')
   }
 
   sendConnectionCheck(): void {
-    this.client.send(CONNECT_PACKET.getData(this));
+    this.client.send(new PacketConnect())
   }
 
   writeConnectionCheck(): any {
-    return { protocol: PROTOCOL_VERSION };
+    return { protocol: PROTOCOL_VERSION }
   }
 }

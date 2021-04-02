@@ -1,5 +1,5 @@
 {
-    "editor.tabSize": 2,
-    "editor.detectIndentation": false,
-    "Lua.runtime.version": "Lua 5.1"
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false,
+  "Lua.runtime.version": "Lua 5.1"
 }

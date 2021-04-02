@@ -1,16 +1,25 @@
-import { PROTOCOL_VERSION } from "./utils";
-import { Packet, PacketHandler } from "./base";
+import { PROTOCOL_VERSION } from './utils'
+import { Packet, NetHandler } from './base'
 
 export class PacketConnect extends Packet {
+  protocolVersion!: number
 
-  write(handler: PacketHandler, errorCode?: number, errorMessage?: string): any {
-    return handler.writeConnectionCheck(errorCode, errorMessage);
+  processPacket (handler: NetHandler): void {
+    throw new Error('Method not implemented.')
   }
 
-  process(data: any, handler: PacketHandler): void {
-    handler.handleConnection(data);
+  writePacketData (buffer: Buffer): void {
+    throw new Error('Method not implemented.')
+  }
+
+  readPacketData (buffer: Buffer): void {
+    buffer.readInt16BE()
+  }
+
+  getPacketSize (): number {
+    throw new Error('Method not implemented.')
   }
 }
 
-export const CONNECT_PACKET = new PacketConnect();
-Packet.addPacket(0, CONNECT_PACKET);
+export const CONNECT_PACKET = new PacketConnect()
+Packet.addPacket(0, CONNECT_PACKET)

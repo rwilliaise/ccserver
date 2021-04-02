@@ -1,33 +1,42 @@
-import WebSocket from "ws";
+import WebSocket from 'ws'
 
-export class PacketHandler {
-
+export class NetHandler {
   handleConnection(data: any, client?: WebSocket): void { }
   sendConnectionCheck(): void { }
-  writeConnectionCheck(errorCode?: number, errorMessage?: string): any { }
 }
 
-export abstract class Packet {
+export type PacketConstructor = { new(...args: any[]): Packet };
 
-  static packetMap: Map<number, Packet> = new Map();
+export class Packet {
+  static packetMap: Map<number, PacketConstructor> = new Map()
 
-  private id!: number;
+  constructor(public readonly id: number) {
 
-  abstract process(data: any, handler: PacketHandler, client?: WebSocket): void;
-  abstract write(handler: PacketHandler, ...args: any[]): any;
-
-  getData(handler: PacketHandler, ...args: any[]) {
-    const out = this.write(handler, args);
-    out.id = this.id;
-    return out;
   }
 
-  static addPacket(id: number, packet: Packet): void {
-    packet.id = id;
-    this.packetMap.set(id, packet);
+  processPacket(handler: NetHandler): void {
+    throw new Error('Method not implemented!')
   }
 
-  static getPacket(id: number): Packet | undefined {
-    return this.packetMap.get(id);
+  readPacketData(buffer: Buffer): void {
+    throw new Error('Method not implemented!')
+  }
+
+  writePacketData(buffer: Buffer): void {
+    throw new Error('Method not implemented!')
+  }
+
+  getPacketSize(): number {
+    throw new Error('Method not implemented!')
+  }
+
+  static addPacket<T extends Packet>(id: number, packet: PacketConstructor): void {
+    this.packetMap.set(id, (class extends packet {
+      id = id
+    }))
+  }
+
+  static getPacket(id: number): PacketConstructor | undefined {
+    return this.packetMap.get(id)
   }
 }

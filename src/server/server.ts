@@ -1,11 +1,11 @@
 import { Packet } from "../shared/base";
 import WebSocket from "ws";
-import { ServerPacketHandler } from "./handler";
+import { ServerNetHandler } from "./handler";
 
 export class Server {
 
   websocket: WebSocket.Server;
-  handler: ServerPacketHandler = new ServerPacketHandler(this);
+  handler: ServerNetHandler = new ServerNetHandler(this);
 
   constructor() {
     this.websocket = new WebSocket.Server({ port: 8080 });
@@ -21,11 +21,11 @@ export class Server {
 
   clientConnected(client: WebSocket) {
     client.on("message", (data) => {
-      if (typeof data === "string") {
-        const object = JSON.parse(data);
+      if (data instanceof Buffer) {
+        const id = data.readInt8()
         let packet;
         if (object.id && (packet = Packet.getPacket(object.id))) {
-          packet.process(object, this.handler);
+          packet.processPacket(object, this.handler);
         }
       }
     });
@@ -33,8 +33,11 @@ export class Server {
     console.log("Client connected!");
   }
 
-  send(client: WebSocket, data: any) {
-    client.send(JSON.stringify(data), (err) => {
+  send(client: WebSocket, packet: Packet) {
+    let out = Buffer.alloc(packet.getPacketSize())
+    out.writeInt8(packet.id)
+    packet.writePacketData(out)
+    client.send(out.toString, { binary: true }, (err) => {
       if (err) {
         console.log(`Send error! [${err.name}] ${err.message} ${err.stack}`)
       }

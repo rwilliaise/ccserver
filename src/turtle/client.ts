@@ -1,53 +1,52 @@
-import { Packet } from "shared/base";
-import { ClientPacketHandler } from "./handler";
+import { Packet } from 'shared/base'
+import { ClientNetHandler } from './handler'
 
 export class Client {
+  static client: Client
 
-  websocket: lWebSocket;
-  listenThread: LuaThread;
-  packetHandler: ClientPacketHandler = new ClientPacketHandler(this);
+  websocket: lWebSocket
+  listenThread: LuaThread
+  packetHandler: ClientNetHandler = new ClientNetHandler(this)
 
   /**
    * Base constructor
    * @param url URL to open a websocket on
    */
   constructor(public url: string) {
-    let ws = http.websocket(url)
-    let [success, err] = (ws as unknown as [lWebSocket | false, string]);
+    const ws = http.websocket(url)
+    const [success, err] = (ws as unknown as [lWebSocket | false, string])
     if (!success) {
-      error(`Websocket client failure! ${err || "<NULL>"}`)
+      error(`Websocket client failure! ${err || '<NULL>'}`)
     } else {
-      this.websocket = success;
+      this.websocket = success
     }
     this.listenThread = coroutine.create(() => {
-      this.listen();
-    });
-    this.packetHandler.sendConnectionCheck();
+      this.listen()
+    })
+    this.packetHandler.sendConnectionCheck()
   }
 
   listen() {
     while (true) {
-      const data = this.websocket.receive();
-      if (data) {
-        const [strData, binary] = data;
+      const data = this.websocket.receive()
+      if (data !== null) {
+        const [strData, binary] = data
         if (binary) {
-          print(`Illegal state: got a binary message! ${strData}`)
-        } else {
-          const [jsonData, err] = textutils.unserializeJSON(strData);
-          if (!jsonData) {
-            print(`Failed to unserialize JSON! ${err || "<NULL>"}`)
-          } else if (jsonData.id) {
-            const packet = Packet.getPacket(jsonData.id);
-            if (packet) {
-              packet.process(jsonData, this.packetHandler);
-            }
+          const buff = Buffer.from(strData)
+          const id = buff.readInt8()
+          const packet = Packet.getPacket(id)
+          if (packet) {
+            packet.readPacketData(buff)
+            packet.processPacket(this.packetHandler)
           } else {
-            print("Invalid packet!");
+            print(`Received invalid packet id: ${id}`)
           }
+        } else {
+          print('Received non-binary input!')
         }
       } else {
-        print("Server closed!");
-        coroutine.yield();
+        print('Server closed!')
+        coroutine.yield()
       }
     }
   }
@@ -56,11 +55,13 @@ export class Client {
    * Start listening to the websocket.
    */
   start() {
-    coroutine.resume(this.listenThread);
+    coroutine.resume(this.listenThread)
   }
 
-  send(data: any) {
-    const out = textutils.serializeJSON(data);
-    this.websocket.send(out, false);
+  send(packet: Packet) {
+    const buff = Buffer.alloc(packet.getPacketSize())
+    buff.writeInt8(packet.id)
+    packet.writePacketData(buff)
+    this.websocket.send(buff.toString(), true)
   }
 }

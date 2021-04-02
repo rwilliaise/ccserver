@@ -1,10 +1,10 @@
-import { PacketHandler } from "../shared/base";
+import { NetHandler } from "../shared/base";
 import { PROTOCOL_VERSION } from "../shared/utils";
 import { Server } from "./server";
 import WebSocket from "ws";
 import { CONNECT_PACKET } from "../shared/connection";
 
-export class ServerPacketHandler extends PacketHandler {
+export class ServerNetHandler extends NetHandler {
 
   constructor(private readonly server: Server) {
     super();

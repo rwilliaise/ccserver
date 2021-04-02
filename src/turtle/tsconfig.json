@@ -22,7 +22,8 @@
     "noHeader": true
   },
   "include": [
-    "../**/*"
+    "./*.ts",
+    "../shared/*.ts"
   ],
   "exclude": [
     "../server"
