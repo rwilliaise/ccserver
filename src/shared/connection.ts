@@ -4,6 +4,13 @@ import { Packet, NetHandler } from './base'
 export class PacketConnect extends Packet {
   protocolVersion!: number
 
+  constructor(id: number, protocolVersion?: number) {
+    super(id)
+    if (protocolVersion) {
+      this.protocolVersion = protocolVersion;
+    }
+  }
+
   processPacket (handler: NetHandler): void {
     throw new Error('Method not implemented.')
   }
@@ -21,5 +28,4 @@ export class PacketConnect extends Packet {
   }
 }
 
-export const CONNECT_PACKET = new PacketConnect()
-Packet.addPacket(0, CONNECT_PACKET)
+Packet.addPacket(0, PacketConnect)

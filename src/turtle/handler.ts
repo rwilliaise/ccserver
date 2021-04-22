@@ -17,10 +17,6 @@ export class ClientNetHandler extends NetHandler {
   }
 
   sendConnectionCheck(): void {
-    this.client.send(new PacketConnect())
-  }
-
-  writeConnectionCheck(): any {
-    return { protocol: PROTOCOL_VERSION }
+    this.client.send(new PacketConnect(0, PROTOCOL_VERSION))
   }
 }

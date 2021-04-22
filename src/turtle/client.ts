@@ -36,8 +36,9 @@ export class Client {
           const id = buff.readInt8()
           const packet = Packet.getPacket(id)
           if (packet) {
-            packet.readPacketData(buff)
-            packet.processPacket(this.packetHandler)
+            let newPacket = new packet(id)
+            newPacket.readPacketData(buff)
+            newPacket.processPacket(this.packetHandler)
           } else {
             print(`Received invalid packet id: ${id}`)
           }

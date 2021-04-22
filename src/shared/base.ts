@@ -5,35 +5,25 @@ export class NetHandler {
   sendConnectionCheck(): void { }
 }
 
-export type PacketConstructor = { new(...args: any[]): Packet };
+export type PacketConstructor = { new(id: number, ...args: any[]): Packet };
 
-export class Packet {
+export abstract class Packet {
   static packetMap: Map<number, PacketConstructor> = new Map()
 
   constructor(public readonly id: number) {
 
   }
 
-  processPacket(handler: NetHandler): void {
-    throw new Error('Method not implemented!')
-  }
+  abstract processPacket(handler: NetHandler): void;
 
-  readPacketData(buffer: Buffer): void {
-    throw new Error('Method not implemented!')
-  }
+  abstract readPacketData(buffer: Buffer): void;
 
-  writePacketData(buffer: Buffer): void {
-    throw new Error('Method not implemented!')
-  }
+  abstract writePacketData(buffer: Buffer): void;
 
-  getPacketSize(): number {
-    throw new Error('Method not implemented!')
-  }
+  abstract getPacketSize(): number;
 
   static addPacket<T extends Packet>(id: number, packet: PacketConstructor): void {
-    this.packetMap.set(id, (class extends packet {
-      id = id
-    }))
+    this.packetMap.set(id, packet)
   }
 
   static getPacket(id: number): PacketConstructor | undefined {
