@@ -8,7 +8,7 @@
     "types": [
       "typescript-to-lua/language-extensions",
       "lua-types/5.1",
-      "cc-tweaked-type-definitions"
+      "cc-tweaked-types"
     ],
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -18,8 +18,9 @@
   "tstl": {
     "luaTarget": "5.1",
     "luaBundle": "../../dist.lua",
-    "luaBundleEntry": "./index.ts",
-    "noHeader": true
+    "luaBundleEntry": "./src/turtle/index.ts",
+    "noHeader": true,
+    "sourceMapTraceback": true
   },
   "include": [
     "./*.ts",

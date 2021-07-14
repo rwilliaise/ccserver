@@ -1,4 +1,29 @@
-import { Client } from './client'
+import { Args } from './args'
+import { listen } from './client'
 
-const client = new Client('ws://localhost:8080')
-client.start()
+// every 5 seconds, try connecting
+const RETRY_RATE = 5
+
+const path = shell.getRunningProgram()
+// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+const name = (fs as unknown as { getName: (this: void, path: string) => string }).getName(path)
+
+if (Args.length !== 1 || turtle === null) {
+  error(`Usage: ${name} <server>`, 0)
+}
+
+if (Args[0] === '-v' || Args[0] === '--version') {
+  error(`Client version: 0.1.0
+Connectable server version: 0.1.0`)
+}
+
+const address = Args[0]
+
+if (string.match(address, '.+:%d+') === undefined) {
+
+}
+
+while (true) {
+  listen(Args[0])
+  os.sleep(RETRY_RATE)
+}
