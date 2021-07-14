@@ -1,13 +1,20 @@
+/* @noimplicitself */
+import { PROTOCOL_VERSION } from '../shared/constants'
 
 export function listen (server: string): void {
-  const [socket, err] = http.websocket(server) as unknown as [lWebSocket | undefined, string | undefined]
-  if (socket === undefined) {
+  print('Attempting connection!')
+  const [socket, err] = http.websocket(server, {
+    'protocol-version': tostring(PROTOCOL_VERSION),
+    named: os.computerLabel() ?? `#${os.computerID()}`
+  }) as unknown as [lWebSocket | false, string | undefined]
+  if (socket === false) {
     print(`Could not connect! ${tostring(err)}`)
     return
   }
+  print('Successfully connected!')
   while (true) {
-    const response = socket.receive()
-    if (response !== null) {
+    const [event, url, response] = os.pullEvent()
+    if (event === 'websocket_message' && url === server && response !== null) {
       const [data] = response
       const [obj, parseErr] = textutils.unserializeJSON(data)
       if (obj === undefined) {
@@ -15,9 +22,8 @@ export function listen (server: string): void {
       } else {
 
       }
-    } else {
-      print('Server shutting down!')
-      break
+    } else if (event === 'websocket_closed' && url === server) {
+      print('Server closed!')
     }
   }
 }

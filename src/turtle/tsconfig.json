@@ -17,13 +17,12 @@
   },
   "tstl": {
     "luaTarget": "5.1",
-    "luaBundle": "../../dist.lua",
+    "luaBundle": "C:/Users/rajaw/AppData/Roaming/CraftOS-PC/computer/0/dist.lua",
     "luaBundleEntry": "./src/turtle/index.ts",
-    "noHeader": true,
-    "sourceMapTraceback": true
+    "noHeader": true
   },
   "include": [
-    "./*.ts",
+    "../turtle/*.ts",
     "../shared/*.ts"
   ],
   "exclude": [

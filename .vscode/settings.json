@@ -8,5 +8,6 @@
     "./src/turtle",
     "./src/server",
     "./src/shared"
-  ]
+  ],
+  "typescript.preferences.importModuleSpecifier": "relative"
 }
