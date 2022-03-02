@@ -4,10 +4,6 @@
   "Lua.runtime.version": "Lua 5.1",
   "standard.engine": "ts-standard",
   "standard.autoFixOnSave": true,
-  "standard.workingDirectories": [
-    "./src/turtle",
-    "./src/server",
-    "./src/shared"
-  ],
+  "standard.treatErrorsAsWarnings": true,
   "typescript.preferences.importModuleSpecifier": "relative"
 }

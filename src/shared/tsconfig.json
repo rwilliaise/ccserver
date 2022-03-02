@@ -1,9 +1,22 @@
 {
   "compilerOptions": {
     "moduleResolution": "node",
+    "module": "commonjs",
     "target": "esnext",
+    "lib": [
+      "ESNext"
+    ],
+    "composite": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "declaration": true,
     "strict": true,
+    "outDir": "../../dist/shared",
   },
+  "tstl": {
+    "luaLibImport": "inline"
+  },
+  "include": [
+    "./**/*.ts"
+  ]
 }

@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "rootDir": "../",
-    "baseUrl": "../",
-    "outDir": "../../dist",
+    "rootDir": "./",
+    "baseUrl": "./",
+    "outDir": "../../dist/server",
     "moduleResolution": "node",
     "module": "commonjs",
     "target": "esnext",
@@ -13,9 +13,9 @@
     "declaration": false
   },
   "include": [
-    "../**/*"
+    "./**/*.ts"
   ],
-  "exclude": [
-    "../turtle"
-  ]
+  "references": [
+      { "path": "../shared" }
+  ],
 }

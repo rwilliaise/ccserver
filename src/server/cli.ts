@@ -2,9 +2,8 @@
 
 import yargs from 'yargs'
 import { DEFAULT_PORT } from '../shared/constants'
-import { start } from './server'
+import { start } from '.'
 
-// eslint-disable-next-line no-void
 void yargs
   .usage('Start a ccserver')
   .help('help')
@@ -31,7 +30,7 @@ void yargs
   .strict()
   .wrap(yargs.terminalWidth())
 
-  .fail((str, e: unknown) => {
+  .fail((str, e) => {
     process.exitCode = 1
     if (str !== undefined && str !== null) console.log(str)
     if (e !== null && e !== undefined) console.log(e)
