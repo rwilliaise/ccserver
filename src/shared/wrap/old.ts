@@ -1,9 +1,10 @@
-import { Processor, Wrap, WrapId } from "../packet";
+import { Processor, Wrap, WrapId } from '../packet'
 
 export class OldVersion extends Wrap {
-  wrapId: WrapId = WrapId.OLD_VERSION;
+  override wrapId: WrapId = WrapId.OLD_VERSION
 
-  receive(processor: Processor): void {
+  override receive (processor: Processor): void {
+    if (!processor.isClient()) { return }
     processor.error('Old version! Upgrade dist.lua')
   }
 }

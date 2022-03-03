@@ -5,3 +5,4 @@ lua/.vscode
 .DS_Store
 /.idea/
 /dist/
+/lua/

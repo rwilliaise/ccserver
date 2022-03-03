@@ -7,6 +7,7 @@
     "module": "commonjs",
     "target": "esnext",
     "esModuleInterop": true,
+    "resolveJsonModule": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
@@ -16,6 +17,6 @@
     "./**/*.ts"
   ],
   "references": [
-      { "path": "../shared" }
+      { "path": "../shared/tsconfig.server.json" }
   ],
 }

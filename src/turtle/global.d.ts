@@ -7,7 +7,7 @@ namespace globalThis {
     /* eslint-disable-next-line @typescript-eslint/naming-convention */
     export const empty_json_array: object
 
-    export function serialize(t: object, opts?: { compact?: boolean, allow_repetitions?: boolean }): string
-    export function unserialize(s: string): object | undefined
+    export function serialize (t: object, opts?: { compact?: boolean, allow_repetitions?: boolean }): string
+    export function unserialize (s: string): object | undefined
   }
 }

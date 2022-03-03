@@ -1,6 +1,7 @@
 
 export enum WrapId {
-  OLD_VERSION
+  OLD_VERSION,
+  NAMED
 }
 
 export interface JsonObject {
@@ -15,7 +16,7 @@ export abstract class Processor {
   abstract error (...data: any[]): void
   abstract exit (...data: any[]): never
 
-  abstract fromWrapId (wrapId: WrapId, data: JsonObject): Wrap
+  abstract fromWrapId (wrapId: WrapId, data: JsonObject): Wrap | undefined
 
   isClient (): boolean { return false }
 
@@ -35,7 +36,9 @@ export abstract class Processor {
     const packet = out as { type: number, data: JsonObject }
     const processed = this.fromWrapId(packet.type, packet.data)
 
-    processed.receive(this)
+    if (processed !== undefined) {
+      processed.receive(this)
+    }
   }
 
   wrap (wrap: Wrap): string {
@@ -64,7 +67,7 @@ export abstract class Wrap {
    * @param processor Processor to act on
    */
   abstract receive (processor: Processor): void
-  
+
   /**
    * Turns the data contained within this packet into a serializable json object.
    */

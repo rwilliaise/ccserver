@@ -17,13 +17,13 @@
   },
   "tstl": {
     "luaTarget": "5.1",
-    "luaBundle": "../../dist/dist.lua",
+    "luaBundle": "../../lua/dist.lua",
     "luaBundleEntry": "./src/turtle/index.ts",
     "noHeader": true,
     "luaLibImport": "inline"
   },
   "references": [
-      { "path": "../shared" }
+      { "path": "../shared/tsconfig.client.json" }
   ],
   "include": [
     "./**/*.ts",

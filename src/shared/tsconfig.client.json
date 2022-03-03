@@ -1,0 +1,6 @@
+{
+  "compilerOptions": {
+    "outDir": "../../lua/shared"
+  },
+  "extends": "./tsconfig.shared.json"
+}

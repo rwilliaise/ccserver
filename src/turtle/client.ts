@@ -45,34 +45,34 @@ export class Client extends Processor {
     }
   }
 
-  log (...data: any[]): void {
+  override log (...data: any[]): void {
     print(debugInfo(), ...data)
   }
 
-  error (...data: any[]): void {
+  override error (...data: any[]): void {
     printError(debugInfo(), ...data)
   }
 
-  exit (...data: any[]): never {
+  override exit (...data: any[]): never {
     error([debugInfo()].concat(data).join(' '), 0)
   }
 
-  fromWrapId (wrapId: WrapId, data: JsonObject): Wrap {
+  override fromWrapId (wrapId: WrapId, data: JsonObject): Wrap | undefined {
     switch (wrapId) {
       case WrapId.OLD_VERSION:
         return new OldVersion()
     }
   }
 
-  isClient(): boolean {
-      return true
+  override isClient (): boolean {
+    return true
   }
 
-  serialize (json: object): string {
+  override serialize (json: object): string {
     return textutils.serializeJSON(json, false)
   }
 
-  deserialize (json: string): [JsonObject | undefined, string] {
+  override deserialize (json: string): [JsonObject | undefined, string] {
     const [out, err] = deserializeJson(json)
 
     if (out === undefined) {

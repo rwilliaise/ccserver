@@ -1,7 +1,8 @@
 import { JsonObject, Processor, Wrap, WrapId } from '../shared/packet'
 import { Headers, PROTOCOL_VERSION } from '../shared/constants'
-import { OldVersion} from '../shared/wrap'
+import { Name, OldVersion } from '../shared/wrap'
 import WebSocket from 'ws'
+import names from './names.json'
 
 function getTime (out: any[]): string {
   const date = new Date()
@@ -13,6 +14,7 @@ function getTime (out: any[]): string {
 
 export class Server extends Processor {
   server!: WebSocket.Server
+  nextCid = 0
 
   start (port: number): void {
     this.server = new WebSocket.Server({
@@ -20,19 +22,29 @@ export class Server extends Processor {
     })
 
     this.server.on('connection', (socket, message) => {
+      let name = message.headers[Headers.NAMED]
       if (message.headers[Headers.PROTOCOL_VERSION] !== String(PROTOCOL_VERSION)) {
         this.send(socket, new OldVersion())
         socket.close()
         return
       }
 
-      this.log(`${message.headers[Headers.NAMED] as string ?? 'unknown client'} has connected!`)
+      if (name === undefined) {
+        name = this.chooseName()
+        this.send(socket, new Name(name))
+      }
+
+      this.log(`${name as string} has connected!`)
       socket.on('close', () => {
-        this.log(`${message.headers[Headers.NAMED] as string ?? 'unknown client'} disconnected`)
+        this.log(`${name as string} disconnected`)
       })
 
       socket.on('message', (data) => {
-        this.receive(data.toString())
+        if (typeof data === 'string') {
+          this.receive(data)
+        } else {
+          this.log('Received invalid binary data.')
+        }
       })
     })
 
@@ -41,15 +53,19 @@ export class Server extends Processor {
     })
   }
 
+  chooseName (): string {
+    return `${String(names.names[Math.floor(Math.random() * names.names.length)])}-${this.nextCid++}`
+  }
+
   send (socket: WebSocket, wrap: Wrap): void {
     socket.send(this.wrap(wrap))
   }
 
-  serialize (json: JsonObject): string {
+  override serialize (json: JsonObject): string {
     return JSON.stringify(json)
   }
 
-  deserialize (json: string): [JsonObject | undefined, string] {
+  override deserialize (json: string): [JsonObject | undefined, string] {
     let parsed
     try {
       parsed = JSON.parse(json)
@@ -58,21 +74,21 @@ export class Server extends Processor {
     }
     return [parsed, '']
   }
-  
-  log (...data: any[]): void {
+
+  override log (...data: any[]): void {
     console.log(getTime(data))
   }
 
-  error (...data: any[]): void {
+  override error (...data: any[]): void {
     console.error(getTime(data))
   }
 
-  exit (...data: any[]): never {
+  override exit (...data: any[]): never {
     console.log(getTime(data))
     process.exit(1)
   }
 
-  fromWrapId (wrapId: WrapId, data: JsonObject): Wrap {
+  override fromWrapId (wrapId: WrapId, data: JsonObject): Wrap | undefined {
     throw new Error('Method not implemented.')
   }
 }
