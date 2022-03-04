@@ -34,15 +34,11 @@ export class Server extends Processor {
         this.send(socket, new Name(name))
       }
 
-      const id = setInterval(() => {
-        this.send(socket, new EmptyWrap()) // heartbeat to combat timeout
-      }, 30 * 1000)
-
       this.log(`${name as string} has connected!`)
       socket.on('close', () => {
         this.log(`${name as string} disconnected`)
 
-        clearInterval(id)
+        // clearInterval(id)
       })
 
       socket.on('pong', () => {
