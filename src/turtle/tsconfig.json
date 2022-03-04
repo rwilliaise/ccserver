@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "rootDir": "./",
+    "rootDir": "../",
     "baseUrl": "./",
     "lib": [
       "ESNext"
@@ -22,11 +22,10 @@
     "noHeader": true,
     "luaLibImport": "inline"
   },
-  "references": [
-      { "path": "../shared/tsconfig.client.json" }
-  ],
   "include": [
     "./**/*.ts",
-    "./**/*.lua"
+    "./**/*.lua",
+    "../shared/**/*.ts",
+    "../shared/**/*.lua"
   ],
 }

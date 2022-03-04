@@ -8,10 +8,10 @@
   },
   "scripts": {
     "test": "tsc --noEmit",
-    "build": "tsc -p src/shared/tsconfig.server.json && npx tsc -p src/server/tsconfig.json && tstl -p src/shared/tsconfig.client.json && tstl -p src/turtle/tsconfig.json",
+    "build": "tsc -p src/shared/tsconfig.json && npx tsc -p src/server/tsconfig.json && tstl -p src/turtle/tsconfig.json",
     "watch-server": "npx tsc -w -p src/server/tsconfig.json",
     "watch-client": "npx tstl -w -p src/turtle/tsconfig.json",
-    "watch": "npx concurrently --kill-others \"npx tsc -w -p src/shared/tsconfig.server.json\" \"npx tstl -w -p src/shared/tsconfig.client.json\" \"npm run watch-server\" \"npm run watch-client\""
+    "watch": "npx concurrently --kill-others \"npx tsc -w -p src/shared/tsconfig.json\" \"npm run watch-server\" \"npm run watch-client\""
   },
   "engines": {
     "node": "14.x"

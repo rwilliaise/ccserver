@@ -2,6 +2,7 @@ import { Headers, PROTOCOL_VERSION } from '../shared/constants'
 import { JsonObject, Wrap, WrapId, Processor } from '../shared/packet'
 import { OldVersion } from '../shared/wrap'
 import { createSocket, deserializeJson, receiveSocket } from './util'
+import { ClientName } from './wrap'
 
 function debugInfo (level = 3): string {
   const info = debug.getinfo(level, 'Sl')
@@ -61,6 +62,8 @@ export class Client extends Processor {
     switch (wrapId) {
       case WrapId.OLD_VERSION:
         return new OldVersion()
+      case WrapId.NAMED:
+        return new ClientName(tostring(data["name"]))
     }
   }
 

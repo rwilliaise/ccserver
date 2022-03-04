@@ -17,6 +17,6 @@
     "./**/*.ts"
   ],
   "references": [
-      { "path": "../shared/tsconfig.server.json" }
+      { "path": "../shared" }
   ],
 }

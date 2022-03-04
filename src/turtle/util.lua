@@ -1,9 +1,9 @@
 
 function createSocket(url, headers)
-  local socket, error = http.websocket(url, headers)
+  local socket, err = http.websocket(url, headers)
 
   if not socket then
-    error("Failed to create socket! " .. error)
+    error("Failed to create socket! " .. err)
   end
 
   return socket

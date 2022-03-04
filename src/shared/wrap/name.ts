@@ -1,4 +1,4 @@
-import { Processor, Wrap, WrapId } from '../packet'
+import { JsonObject, Processor, Wrap, WrapId } from '../packet'
 
 export class Name extends Wrap {
   override wrapId: WrapId = WrapId.NAMED
@@ -8,5 +8,9 @@ export class Name extends Wrap {
   }
 
   override receive (processor: Processor): void {
+  }
+
+  wrap(): JsonObject {
+      return { name: this.name }
   }
 }

@@ -1,4 +1,4 @@
-import { JsonObject, Processor, Wrap, WrapId } from '../shared/packet'
+import { EmptyWrap, JsonObject, Processor, Wrap, WrapId } from '../shared/packet'
 import { Headers, PROTOCOL_VERSION } from '../shared/constants'
 import { Name, OldVersion } from '../shared/wrap'
 import WebSocket from 'ws'
@@ -34,9 +34,19 @@ export class Server extends Processor {
         this.send(socket, new Name(name))
       }
 
+      const id = setInterval(() => {
+        this.send(socket, new EmptyWrap()) // heartbeat to combat timeout
+      }, 30 * 1000)
+
       this.log(`${name as string} has connected!`)
       socket.on('close', () => {
         this.log(`${name as string} disconnected`)
+
+        clearInterval(id)
+      })
+
+      socket.on('pong', () => {
+        
       })
 
       socket.on('message', (data) => {
@@ -51,6 +61,12 @@ export class Server extends Processor {
     this.server.on('listening', () => {
       this.log('Server started!')
     })
+
+    setInterval(() => {
+      this.server.clients.forEach((ws) => {
+        ws.ping()
+      })
+    }, 30000)
   }
 
   chooseName (): string {

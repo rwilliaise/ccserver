@@ -1,5 +1,7 @@
-{
+{ 
+  // on the server there is no bundling, so this tsconfig.json is only for the server
   "compilerOptions": {
+    "outDir": "../../dist/shared",
     "moduleResolution": "node",
     "module": "commonjs",
     "target": "esnext",
@@ -11,9 +13,6 @@
     "skipLibCheck": true,
     "declaration": true,
     "strict": true,
-  },
-  "tstl": {
-    "luaLibImport": "inline"
   },
   "include": [
     "./**/*.ts"
