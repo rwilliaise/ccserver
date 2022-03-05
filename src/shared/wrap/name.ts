@@ -10,7 +10,7 @@ export class Name extends Wrap {
   override receive (processor: Processor): void {
   }
 
-  wrap(): JsonObject {
-      return { name: this.name }
+  wrap (): JsonObject {
+    return { name: this.name }
   }
 }

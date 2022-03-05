@@ -63,7 +63,7 @@ export class Client extends Processor {
       case WrapId.OLD_VERSION:
         return new OldVersion()
       case WrapId.NAMED:
-        return new ClientName(tostring(data["name"]))
+        return new ClientName(tostring(data.name))
     }
   }
 

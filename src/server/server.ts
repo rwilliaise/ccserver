@@ -1,8 +1,8 @@
-import { EmptyWrap, JsonObject, Processor, Wrap, WrapId } from '../shared/packet'
-import { Headers, PROTOCOL_VERSION } from '../shared/constants'
-import { Name, OldVersion } from '../shared/wrap'
+import { JsonObject, Processor, Wrap, WrapId } from '../shared/packet'
 import WebSocket from 'ws'
 import names from './names.json'
+import { ServerWrap } from './wrap'
+import { Turtle } from './turtle'
 
 function getTime (out: any[]): string {
   const date = new Date()
@@ -14,6 +14,7 @@ function getTime (out: any[]): string {
 
 export class Server extends Processor {
   server!: WebSocket.Server
+  turtles = new Set()
   nextCid = 0
 
   start (port: number): void {
@@ -22,55 +23,50 @@ export class Server extends Processor {
     })
 
     this.server.on('connection', (socket, message) => {
-      let name = message.headers[Headers.NAMED]
-      if (message.headers[Headers.PROTOCOL_VERSION] !== String(PROTOCOL_VERSION)) {
-        this.send(socket, new OldVersion())
-        socket.close()
-        return
-      }
-
-      if (name === undefined) {
-        name = this.chooseName()
-        this.send(socket, new Name(name))
-      }
-
-      this.log(`${name as string} has connected!`)
-      socket.on('close', () => {
-        this.log(`${name as string} disconnected`)
-
-        // clearInterval(id)
-      })
-
-      socket.on('pong', () => {
-        
-      })
-
-      socket.on('message', (data) => {
-        if (typeof data === 'string') {
-          this.receive(data)
-        } else {
-          this.log('Received invalid binary data.')
-        }
-      })
+      const turtle = new Turtle(socket, message, this, this.nextCid++)
+      this.turtles.add(turtle)
     })
 
     this.server.on('listening', () => {
       this.log('Server started!')
     })
-
-    setInterval(() => {
-      this.server.clients.forEach((ws) => {
-        ws.ping()
-      })
-    }, 30000)
   }
 
-  chooseName (): string {
-    return `${String(names.names[Math.floor(Math.random() * names.names.length)])}-${this.nextCid++}`
+  close (turtle: Turtle): boolean {
+    return this.turtles.delete(turtle)
   }
 
-  send (socket: WebSocket, wrap: Wrap): void {
-    socket.send(this.wrap(wrap))
+  initialize (turtle: Turtle): void {
+
+  }
+
+  receiveServer (turtle: Turtle, data: string): void {
+    const [out, error] = this.deserialize(data)
+
+    if (out === undefined) {
+      this.error('Malformed json', error)
+      return
+    }
+
+    if (!this.matchSchema(out, { type: 0, data: {} })) {
+      this.error('Invalid packet')
+      return
+    }
+
+    const packet = out as { type: number, data: JsonObject }
+    const processed = this.fromWrapId(packet.type, packet.data)
+
+    if (processed !== undefined) {
+      if (processed instanceof ServerWrap) {
+        processed.receiveServer(turtle, this)
+      } else {
+        processed.receive(this)
+      }
+    }
+  }
+
+  chooseName (cid: number): string {
+    return `${String(names.names[Math.floor(Math.random() * names.names.length)])}-${cid}`
   }
 
   override serialize (json: JsonObject): string {

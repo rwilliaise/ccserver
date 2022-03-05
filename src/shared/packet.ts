@@ -2,7 +2,8 @@
 export enum WrapId {
   OLD_VERSION,
   NAMED,
-  EMPTY
+  EMPTY,
+  WORLD_UPDATE,
 }
 
 export interface JsonObject {
@@ -74,13 +75,5 @@ export abstract class Wrap {
    */
   wrap (): JsonObject {
     return {}
-  }
-}
-
-/** Empty wrap that serves as a heartbeat message. */
-export class EmptyWrap extends Wrap {
-  wrapId = WrapId.EMPTY
-
-  receive(processor: Processor): void {
   }
 }
