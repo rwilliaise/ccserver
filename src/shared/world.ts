@@ -3,13 +3,13 @@ import { JsonObject } from './packet'
 export class WorldData {
   palette: Record<string, string> = {}
 
-  getPalette (str: string): number {
+  getPalette (str: string): string | undefined {
     for (const key of Object.keys(this.palette)) {
       if (this.palette[key] === str.trim()) {
-        return Number(key)
+        return key
       }
     }
-    return -1
+    return undefined
   }
 
   wrap (): JsonObject {
