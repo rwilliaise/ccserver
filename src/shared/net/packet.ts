@@ -12,6 +12,7 @@ export interface SerializedPacket {
 
 export abstract class Packet {
   abstract readonly packetId: PacketId
+  abstract readonly requiresAuth: boolean
 
   abstract receive (obj: object, state?: PacketState): void
 

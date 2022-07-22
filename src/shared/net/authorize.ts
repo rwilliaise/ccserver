@@ -7,6 +7,7 @@ interface AuthorizationData {
 }
 
 export class AuthorizePacket extends Packet {
+  requiresAuth = false
   packetId = PacketId.AUTHORIZE
 
   receive (obj: object, state?: PacketState | undefined): void {
