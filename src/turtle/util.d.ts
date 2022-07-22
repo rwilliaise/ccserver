@@ -1,6 +1,6 @@
 /** @noSelfInFile */
 
-import { JsonObject } from '../shared/packet'
+import { SerializableObject } from '../shared/data/util'
 
 /**
  * Glue to unmuddle some of the return types of http.websocket
@@ -9,4 +9,4 @@ import { JsonObject } from '../shared/packet'
  */
 export function createSocket (url: string, headers: http.Headers): lWebSocket
 export function receiveSocket (socket: lWebSocket, timeout?: number): LuaMultiReturn<[string | undefined, boolean]>
-export function deserializeJson (str: string): LuaMultiReturn<[JsonObject | undefined, string]>
+export function deserializeJson (str: string): LuaMultiReturn<[SerializableObject | undefined, string]>
