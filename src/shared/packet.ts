@@ -1,13 +1,10 @@
+import { JsonObject, matchSchema } from './util'
 
 export enum WrapId {
   OLD_VERSION,
   NAMED,
   EMPTY,
   WORLD_UPDATE,
-}
-
-export interface JsonObject {
-  [key: string]: number | string | boolean | object | JsonObject
 }
 
 export abstract class Processor {
@@ -30,7 +27,7 @@ export abstract class Processor {
       return
     }
 
-    if (!this.matchSchema(out, { type: 0, data: {} })) {
+    if (!matchSchema(out, { type: 0, data: {} })) {
       this.error('Invalid packet')
       return
     }
@@ -48,12 +45,6 @@ export abstract class Processor {
     const packet = { type: wrap.wrapId, data: out }
 
     return this.serialize(packet)
-  }
-
-  matchSchema (data: JsonObject, schema: JsonObject): boolean {
-    const dataKeys = Object.keys(data)
-    return Object.keys(schema)
-      .every((key) => dataKeys.includes(key) && typeof data[key] === typeof schema[key])
   }
 }
 

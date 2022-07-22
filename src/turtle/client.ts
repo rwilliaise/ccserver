@@ -1,12 +1,13 @@
 import { Headers, PROTOCOL_VERSION } from '../shared/constants'
-import { JsonObject, Wrap, WrapId, Processor } from '../shared/packet'
+import { Wrap, WrapId, Processor } from '../shared/packet'
+import { JsonObject } from '../shared/util'
 import { OldVersion } from '../shared/wrap'
 import { createSocket, deserializeJson, receiveSocket } from './util'
 import { ClientName } from './wrap'
 
 function debugInfo (level = 3): string {
   const info = debug.getinfo(level, 'Sl')
-  return `[${info?.short_src ?? '<unknown>'}:${info?.currentline ?? '0'} ${os.date('%H:%M:%S')}]`
+  return `[${os.date('%H:%M:%S')}] [${info?.short_src ?? 'anonymous'}:${info?.currentline ?? '0'}]`
 }
 
 export class Client extends Processor {
@@ -79,7 +80,7 @@ export class Client extends Processor {
     const [out, err] = deserializeJson(json)
 
     if (out === undefined) {
-      return [undefined, err]
+      return [{}, err]
     }
 
     return [out, '']

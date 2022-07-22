@@ -1,4 +1,4 @@
-import { JsonObject } from './packet'
+import { JsonObject } from './util'
 
 export class WorldData {
   palette: Record<string, string> = {}
