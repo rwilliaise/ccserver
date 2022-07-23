@@ -1,25 +1,29 @@
-import { Header, PROTOCOL_VERSION } from '../shared/constants'
+import { FatalError, Header, PROTOCOL_VERSION } from '../shared/constants'
 import { Vec3 } from '../shared/math/vector'
 import { Networker } from '../shared/net/networker'
-import { GlobalState, SidedState, TurtleState } from '../shared/data/state'
+import { Equipped, GlobalState, SidedState, TurtleState } from '../shared/data/state'
 import { createSocket, deserializeJson, receiveSocket } from './util'
 import { matchSchema } from '../shared/data/util'
 import { Packet, PacketId } from '../shared/net/packet'
+import { deserializeVec3, SerializedVec3 } from '../shared/data/serde'
 
 const SAVE_LOCATION = '/.hive_data'
 
 interface SaveData {
-  worldPosition?: Vec3
+  worldPosition?: SerializedVec3
+  equipped: Equipped
 }
 
 export class Client extends Networker implements TurtleState, GlobalState {
   auth?: string
   worldPosition?: Vec3
   name?: string = os.getComputerLabel()
+  equipped = {}
 
   knownTurtles = []
   claims = []
   socket!: lWebSocket
+  currentId = 0
 
   constructor () {
     super()
@@ -38,8 +42,12 @@ export class Client extends Networker implements TurtleState, GlobalState {
     if (vec !== this.worldPosition) {
       printError('Failed position check - position changed. Updating position...')
 
-      // this.send(PacketId.UPDATE_TURTLE)
+      this.send(PacketId.UPDATE_TURTLE, {})
     }
+  }
+
+  save (): void {
+
   }
 
   private load (): void {
@@ -61,13 +69,10 @@ export class Client extends Networker implements TurtleState, GlobalState {
       return
     }
 
-    if (matchSchema<SaveData>(processed, {})) {
-      this.worldPosition = processed.worldPosition
+    if (matchSchema<SaveData>(processed, { equipped: {} })) {
+      this.worldPosition = deserializeVec3(processed.worldPosition)
+      this.equipped = processed.equipped
     }
-  }
-
-  private save (): void {
-
   }
 
   private generateHeaders (): http.Headers {
@@ -85,7 +90,7 @@ export class Client extends Networker implements TurtleState, GlobalState {
     const packet = this.packetRegistry.get(id) as Packet
     const ser = packet.send(data, this.assembleState())
 
-    this.socket.send(ser)
+    this.socket.send(textutils.serializeJSON(ser))
   }
 
   start (url: string): void {
@@ -93,27 +98,37 @@ export class Client extends Networker implements TurtleState, GlobalState {
 
     this.checkPosition()
 
-    while (true) {
-      const [message, binary] = receiveSocket(this.socket, 60)
+    try {
+      while (true) {
+        const [message, binary] = receiveSocket(this.socket, 60)
 
-      if (message === undefined) {
-        throw new Error('Timed out')
-      }
+        if (message === undefined) {
+          throw new Error('Timed out')
+        }
 
-      if (!binary) {
-        const [obj, msg] = deserializeJson(message)
+        if (!binary) {
+          const [obj, msg] = deserializeJson(message)
 
-        if (obj === undefined) {
-          printError(`Received malformed JSON: ${msg}`)
-        } else {
-          try {
-            this.process(obj, this.assembleState())
-          } catch (e) {
-            printError(e)
+          if (obj === undefined) {
+            printError(`Received malformed JSON: ${msg}`)
+          } else {
+            try {
+              this.process(obj, this.assembleState())
+            } catch (e) {
+              if (e instanceof FatalError) {
+                throw e
+              }
+
+              printError(e)
+            }
           }
         }
       }
+    } catch (e) {
+      printError(e)
     }
+
+    this.save()
   }
 
   assembleState (): SidedState {

@@ -2,9 +2,13 @@ import { Header } from '../constants'
 import { SidedState } from '../data/state'
 
 export enum PacketId {
+  EMPTY,
+  ERROR,
+
   AUTHORIZE,
+  NAME,
+
   UPDATE_TURTLE,
-  NAME
 }
 
 type Headers = Record<string, any>

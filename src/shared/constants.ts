@@ -10,3 +10,5 @@ export enum Header {
   AUTHORIZATION = 'x-authorization',
   NAMED = 'x-named',
 }
+
+export class FatalError extends Error {}

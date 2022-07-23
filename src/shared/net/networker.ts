@@ -1,8 +1,10 @@
 import { matchSchema } from '../data/util'
 import { Packet, PacketId, SerializedPacket } from './packet'
 import { SidedState } from '../data/state'
-import { S2CAuthorizePacket } from './authorize'
 import { Header } from '../constants'
+
+import { S2CAuthorizePacket } from './authorize'
+import { S2CErrorPacket } from './error'
 
 export abstract class Networker {
   packetRegistry = new Map<PacketId, Packet>()
@@ -13,6 +15,7 @@ export abstract class Networker {
 
   registerPackets (): void {
     this.packetRegistry.set(PacketId.AUTHORIZE, new S2CAuthorizePacket())
+    this.packetRegistry.set(PacketId.ERROR, new S2CErrorPacket())
   }
 
   /**
