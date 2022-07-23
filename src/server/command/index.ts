@@ -1,5 +1,4 @@
 import { Server } from '../server'
-import { SaveCommand } from './save'
 
 const COMMAND_REGISTRY = new Map<string, Command>()
 
@@ -21,8 +20,4 @@ export function run (args: string[]): void {
   }
 
   throw new Error(`Command ${name} not found!`)
-}
-
-export function register (server: Server): void {
-  Command.register('save', new SaveCommand(server))
 }

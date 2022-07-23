@@ -1,11 +1,12 @@
 import { FatalError, Header, PROTOCOL_VERSION } from '../shared/constants'
 import { Vec3 } from '../shared/math/vector'
 import { Networker } from '../shared/net/networker'
-import { Equipped, GlobalState, SidedState, TurtleState } from '../shared/data/state'
+import { Equipped, GlobalState, ListenersTable, SidedState, TurtleState } from '../shared/data/state'
 import { createSocket, deserializeJson, receiveSocket } from './util'
 import { matchSchema } from '../shared/data/util'
 import { Packet, PacketId } from '../shared/net/packet'
 import { deserializeVec3, SerializedVec3 } from '../shared/data/serde'
+import { S2CSavePacket } from './net/save'
 
 const SAVE_LOCATION = '/.hive_data'
 
@@ -23,66 +24,28 @@ export class Client extends Networker implements TurtleState, GlobalState {
   knownTurtles = []
   claims = []
   socket!: lWebSocket
-  currentId = 0
+  id!: number
+  listeners = new ListenersTable()
 
   constructor () {
     super()
     this.load()
+
+    this.listeners.set('name', (_k, _o, n) => { this.name = n as string })
   }
 
-  /**
-   * Checks if the saved world position equals GPS-based coordinates.
-   */
-  private checkPosition (): void {
-    const vec = new Vec3(...gps.locate(3) ?? [])
-    if (vec === Vec3.ZERO) {
-      return
-    }
-
-    if (vec !== this.worldPosition) {
-      printError('Failed position check - position changed. Updating position...')
-
-      this.send(PacketId.UPDATE_TURTLE, {})
-    }
+  override registerPackets (): void {
+    super.registerPackets()
+    this.packetRegistry.set(PacketId.SAVE, new S2CSavePacket(this))
   }
 
   save (): void {
 
   }
 
-  private load (): void {
-    if (!fs.exists(SAVE_LOCATION)) {
-      return
-    }
-
-    const [handle] = fs.open(SAVE_LOCATION, 'r')
-    let data: string | null = null
-
-    if (handle === null || (data = handle.readAll()) === null) {
-      return
-    }
-
-    const [processed, err] = deserializeJson(data)
-
-    if (processed === undefined) {
-      printError(`Failed to load, err: ${err}`)
-      return
-    }
-
-    if (matchSchema<SaveData>(processed, { equipped: {} })) {
-      this.worldPosition = deserializeVec3(processed.worldPosition)
-      this.equipped = processed.equipped
-    }
-  }
-
-  private generateHeaders (): http.Headers {
-    return {
-      [Header.NAMED]: os.getComputerLabel(),
-      [Header.PROTOCOL_VERSION]: tostring(PROTOCOL_VERSION)
-    }
-  }
-
-  send (id: PacketId, data: object): void {
+  send<F extends keyof TurtleState> (id: PacketId.UPDATE_TURTLE, data: { field: F, value: TurtleState[F] }): void
+  send (id: Exclude<PacketId, PacketId.UPDATE_TURTLE>, data: any): void
+  send (id: PacketId, data: any): void {
     if (!this.packetRegistry.has(id)) {
       throw new Error(`Received non-registered packet, id ${id}`)
     }
@@ -95,12 +58,13 @@ export class Client extends Networker implements TurtleState, GlobalState {
 
   start (url: string): void {
     this.socket = createSocket(url, this.generateHeaders())
-
     this.checkPosition()
 
     try {
       while (true) {
-        const [message, binary] = receiveSocket(this.socket, 60)
+        const [message, binary] = receiveSocket(this.socket, 15)
+
+        print(message)
 
         if (message === undefined) {
           throw new Error('Timed out')
@@ -133,5 +97,53 @@ export class Client extends Networker implements TurtleState, GlobalState {
 
   assembleState (): SidedState {
     return { turtle: this, isClient: true, global: this }
+  }
+
+  /**
+   * Checks if the saved world position equals GPS-based coordinates.
+   */
+  private checkPosition (): void {
+    const vec = new Vec3(...gps.locate(3) ?? [])
+    if (vec === Vec3.ZERO) {
+      return
+    }
+
+    if (vec !== this.worldPosition) {
+      printError('Failed position check - position changed. Updating position...')
+
+      this.send(PacketId.UPDATE_TURTLE, { field: 'worldPosition', value: vec })
+    }
+  }
+
+  private load (): void {
+    if (!fs.exists(SAVE_LOCATION)) {
+      return
+    }
+
+    const [handle] = fs.open(SAVE_LOCATION, 'r')
+    let data: string | null = null
+
+    if (handle === null || (data = handle.readAll()) === null) {
+      return
+    }
+
+    const [processed, err] = deserializeJson(data)
+
+    if (processed === undefined) {
+      printError(`Failed to load, err: ${err}`)
+      return
+    }
+
+    if (matchSchema<SaveData>(processed, { equipped: {} })) {
+      this.worldPosition = deserializeVec3(processed.worldPosition)
+      this.equipped = processed.equipped
+    }
+  }
+
+  private generateHeaders (): http.Headers {
+    return {
+      [Header.NAMED]: os.getComputerLabel(),
+      [Header.PROTOCOL_VERSION]: tostring(PROTOCOL_VERSION)
+    }
   }
 }

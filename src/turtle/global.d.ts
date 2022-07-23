@@ -1,7 +1,7 @@
-/* @noSelfInFile */
+/** @noSelfInFile */
 
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-namespace globalThis {
+declare global {
 
   export namespace textutils {
     /* eslint-disable-next-line @typescript-eslint/naming-convention */
@@ -16,3 +16,5 @@ namespace globalThis {
     export function locate (timeout = 2, debug = false): LuaMultiReturn<[number, number, number]> | undefined
   }
 }
+
+export default global

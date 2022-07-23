@@ -5,6 +5,8 @@ import { Header } from '../constants'
 
 import { S2CAuthorizePacket } from './authorize'
 import { S2CErrorPacket } from './error'
+import { EmptyPacket } from './empty'
+import { TurtleUpdatePacket } from './update'
 
 export abstract class Networker {
   packetRegistry = new Map<PacketId, Packet>()
@@ -16,6 +18,9 @@ export abstract class Networker {
   registerPackets (): void {
     this.packetRegistry.set(PacketId.AUTHORIZE, new S2CAuthorizePacket())
     this.packetRegistry.set(PacketId.ERROR, new S2CErrorPacket())
+    this.packetRegistry.set(PacketId.EMPTY, new EmptyPacket())
+
+    this.packetRegistry.set(PacketId.UPDATE_TURTLE, new TurtleUpdatePacket())
   }
 
   /**

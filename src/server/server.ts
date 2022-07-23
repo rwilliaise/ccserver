@@ -4,11 +4,12 @@ import WebSocket from 'ws'
 import { DEFAULT_PORT } from '../shared/constants'
 import { GlobalState, SidedState } from '../shared/data/state'
 import { Networker } from '../shared/net/networker'
-import { run } from './command'
+import { Command, run } from './command'
 import { TurtleClient } from './net/client'
-
 import names from './names.json'
 import { Packet, PacketId } from '../shared/net/packet'
+import { EmptyPacket } from '../shared/net/empty'
+import { SaveCommand } from './command/save'
 
 export class Server extends Networker implements GlobalState {
   currentId = 0
@@ -25,20 +26,33 @@ export class Server extends Networker implements GlobalState {
 
   private readonly clients = new Map<WebSocket, TurtleClient>()
 
+  override registerPackets (): void {
+    super.registerPackets()
+    this.packetRegistry.set(PacketId.SAVE, new EmptyPacket())
+  }
+
   start (port = DEFAULT_PORT): void {
     this.socket = new WebSocket.Server({ port })
-    this.socket.on('connection', this.open)
+    this.socket.on('connection', (socket, request) => this.open(socket, request))
 
-    this.interface.on('line', this.readLine)
+    this.interface.on('line', (line) => this.readLine(line))
     this.interface.prompt()
   }
 
-  generateTurtleId (): string {
-    return names.names[Math.round(Math.random() * names.names.length)]
+  registerCommands (): void {
+    Command.register('save', new SaveCommand(this))
+  }
+
+  generateTurtleId (turtle: TurtleClient): string {
+    return `${names.names[Math.round(Math.random() * names.names.length)] as string}-${turtle.id}`
   }
 
   receive (client: TurtleClient, data: string): void {
-    this.process(JSON.parse(data), this.assembleState(client))
+    try {
+      this.process(JSON.parse(data), this.assembleState(client))
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   send (turtle: TurtleClient, id: PacketId, data: any): void {
@@ -52,8 +66,22 @@ export class Server extends Networker implements GlobalState {
     turtle.socket.send(JSON.stringify(ser))
   }
 
-  save (): void {
+  broadcast (id: PacketId, data: any): void {
+    this.clients.forEach((client) => {
+      this.send(client, id, data)
+    })
+  }
 
+  save (): void {
+    this.broadcast(PacketId.SAVE, {})
+  }
+
+  allocateId (): number {
+    return this.currentId++
+  }
+
+  disconnect (socket: WebSocket): boolean {
+    return this.clients.delete(socket)
   }
 
   private load (): void {
@@ -69,7 +97,11 @@ export class Server extends Networker implements GlobalState {
   }
 
   private readLine (line: string): void {
-    run(line.split(' '))
+    try {
+      run(line.split(' '))
+    } catch (e) {
+      console.error(e)
+    }
     this.interface.prompt()
   }
 

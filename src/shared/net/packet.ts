@@ -9,6 +9,7 @@ export enum PacketId {
   NAME,
 
   UPDATE_TURTLE,
+  SAVE
 }
 
 type Headers = Record<string, any>
@@ -29,7 +30,7 @@ export abstract class Packet {
     return { id: this.packetId, headers: this.generateHeaders(state), data }
   }
 
-  private generateHeaders (state?: SidedState): Headers {
+  protected generateHeaders (state?: SidedState): Headers {
     return {
       [Header.AUTHORIZATION]: state?.turtle?.auth
     }

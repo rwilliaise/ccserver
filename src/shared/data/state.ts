@@ -6,17 +6,21 @@ export interface Equipped {
   left?: string
 }
 
+export class ListenersTable extends Map<keyof TurtleState, <F extends keyof TurtleState>(key: F, oldValue: TurtleState[F], newValue: TurtleState[F]) => void> {}
+
 export interface TurtleState {
   worldPosition?: Vec3
   auth?: string
   name?: string
   equipped: Equipped
+  id: number
+
+  listeners: ListenersTable
 }
 
 export interface GlobalState {
   claims: Rect[]
   knownTurtles: string[]
-  currentId: number
 }
 
 export interface SidedState {

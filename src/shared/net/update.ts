@@ -1,7 +1,7 @@
-import { deserialize } from '../data/serde'
+import { deserialize, serialize } from '../data/serde'
 import { SidedState, TurtleState } from '../data/state'
 import { matchSchema, MultiSpec } from '../data/util'
-import { Packet, PacketId } from './packet'
+import { Packet, PacketId, SerializedPacket } from './packet'
 
 interface TurtleUpdatePacketData {
   field: keyof TurtleState
@@ -27,5 +27,16 @@ export class TurtleUpdatePacket extends Packet {
         state.turtle[obj.field] = obj.value
       }
     }
+  }
+
+  override send (data: object, state?: SidedState | undefined): SerializedPacket {
+    if (!matchSchema<TurtleUpdatePacketData>(data, { field: 'worldPosition', value: new MultiSpec({}, '', 0) })) {
+      throw new Error('Received malformed packet')
+    }
+    if (typeof data.value !== 'string' && typeof data.value !== 'number') {
+      data.value = serialize(data.value)
+    }
+
+    return { id: this.packetId, headers: this.generateHeaders(state), data }
   }
 }

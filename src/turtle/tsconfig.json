@@ -7,6 +7,9 @@
     ],
     "target": "ES6",
     "moduleResolution": "node",
+    "typeRoots": [
+      "global.d.ts"
+    ],
     "types": [
       "typescript-to-lua/language-extensions",
       "lua-types/5.1",
@@ -15,7 +18,8 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "strict": true,
-    "declaration": false
+    "declaration": false,
+    "removeComments": false
   },
   "tstl": {
     "luaTarget": "5.1",

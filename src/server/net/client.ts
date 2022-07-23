@@ -1,7 +1,7 @@
 import { IncomingMessage } from 'http'
 import WebSocket from 'ws'
 import { Header, PROTOCOL_VERSION } from '../../shared/constants'
-import { TurtleState } from '../../shared/data/state'
+import { ListenersTable, TurtleState } from '../../shared/data/state'
 import { Vec3 } from '../../shared/math/vector'
 import { PacketId } from '../../shared/net/packet'
 import { Server } from '../server'
@@ -11,10 +11,15 @@ export class TurtleClient implements TurtleState {
   auth?: string
   name?: string
   equipped = {}
+  id: number
+  listeners = new ListenersTable()
 
   connectionAlive = true
 
   constructor (readonly socket: WebSocket, readonly owner: Server, request: IncomingMessage) {
+    this.id = owner.allocateId()
+    this.send(PacketId.UPDATE_TURTLE, { field: 'id', value: this.id })
+
     socket.on('close', (code, reason) => {
       console.log(`${String(this.name)} has disconnected (${code} ${reason})`)
     })
@@ -28,7 +33,7 @@ export class TurtleClient implements TurtleState {
     let name = request.headers[Header.NAMED]
 
     if (typeof name !== 'string') {
-      name = owner.generateTurtleId()
+      name = owner.generateTurtleId(this)
       this.send(PacketId.UPDATE_TURTLE, { field: 'name', value: name })
       this.name = name
     }
@@ -43,10 +48,11 @@ export class TurtleClient implements TurtleState {
       this.connectionAlive = false
       socket.ping()
 
-      this.send(PacketId.EMPTY, {})
+      this.send(PacketId.EMPTY, {}) // just so the timeout doesn't get triggered
     }, 10000)
 
     socket.on('message', (data) => {
+      this.connectionAlive = true
       if (typeof data === 'string') {
         owner.receive(this, data)
       } else {
@@ -59,6 +65,8 @@ export class TurtleClient implements TurtleState {
     })
   }
 
+  send<F extends keyof TurtleState> (id: PacketId.UPDATE_TURTLE, data: { field: F, value: TurtleState[F] }): void
+  send (id: Exclude<PacketId, PacketId.UPDATE_TURTLE>, data: any): void
   send (id: PacketId, data: any): void {
     this.owner.send(this, id, data)
   }
