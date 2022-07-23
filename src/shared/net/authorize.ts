@@ -1,21 +1,23 @@
 import { matchSchema } from '../data/util'
 import { Packet, PacketId } from './packet'
-import { PacketState } from '../state'
+import { SidedState } from '../data/state'
 
-interface AuthorizationData {
+interface AuthorizePacketData {
   auth: string
 }
 
-export class AuthorizePacket extends Packet {
-  requiresAuth = false
+export class S2CAuthorizePacket extends Packet {
+  override requiresAuth = false
+
   packetId = PacketId.AUTHORIZE
 
-  receive (obj: object, state?: PacketState | undefined): void {
-    if (!matchSchema(obj, { auth: 'auth code' })) {
+  receive (obj: object, state?: SidedState | undefined): void {
+    if (state?.isClient ?? false) { return }
+    if (!matchSchema<AuthorizePacketData>(obj, { auth: 'auth code' })) {
       throw new Error('Received malformed packet, does not have authorization code')
     }
     if (state?.turtle?.auth !== undefined) {
-      state.turtle.auth = (obj as AuthorizationData).auth
+      state.turtle.auth = obj.auth
     }
   }
 }

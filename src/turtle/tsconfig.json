@@ -5,6 +5,7 @@
     "lib": [
       "ESNext"
     ],
+    "target": "ES6",
     "types": [
       "typescript-to-lua/language-extensions",
       "lua-types/5.1",

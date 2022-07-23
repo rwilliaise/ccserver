@@ -1,6 +1,6 @@
 {
   "name": "ccserver",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A Minecraft client that interfaces through ComputerCraft turtles.",
   "main": "dist/server/index.js",
   "bin": {
@@ -31,6 +31,7 @@
     "typescript-to-lua": "^1.7.1"
   },
   "dependencies": {
+    "fastpriorityqueue": "^0.7.2",
     "http": "0.0.1-security",
     "ts-promise": "^2.2.0",
     "ws": "^7.4.2",

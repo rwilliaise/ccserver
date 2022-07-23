@@ -10,4 +10,9 @@ namespace globalThis {
     export function serialize (t: object, opts?: { compact?: boolean, allow_repetitions?: boolean }): string
     export function unserialize (s: string): object | undefined
   }
+
+  export namespace gps {
+
+    export function locate (timeout = 2, debug = false): LuaMultiReturn<[number, number, number]> | undefined
+  }
 }
