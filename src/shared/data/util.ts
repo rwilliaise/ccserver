@@ -11,6 +11,9 @@ export class MultiSpec extends SchemaSpec {
   }
 }
 
+/**
+ * Checks if an object matches a supplied schema, functioning as a typecast.
+ */
 export function matchSchema<T> (data: any, schema: Schema<T>): data is T {
   if (typeof data !== typeof schema) {
     return false

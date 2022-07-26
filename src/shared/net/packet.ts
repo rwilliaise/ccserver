@@ -8,6 +8,7 @@ export enum PacketId {
   AUTHORIZE,
   NAME,
 
+  ENQUEUE,
   UPDATE_TURTLE,
   SAVE
 }

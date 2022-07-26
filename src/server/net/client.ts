@@ -13,6 +13,8 @@ export class TurtleClient implements TurtleState {
   equipped = {}
   id: number
   listeners = new ListenersTable()
+  taskQueue = []
+  registeredTasks = new Map()
 
   connectionAlive = true
 
@@ -70,4 +72,6 @@ export class TurtleClient implements TurtleState {
   send (id: PacketId, data: any): void {
     this.owner.send(this, id, data)
   }
+
+  replicate (): void {}
 }

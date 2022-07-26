@@ -1,5 +1,4 @@
 
 export class Planner {
-
-  createPlan(): void {}
+  createPlan (): void {}
 }

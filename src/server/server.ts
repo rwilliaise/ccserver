@@ -2,7 +2,7 @@ import { IncomingMessage } from 'http'
 import * as readline from 'readline'
 import WebSocket from 'ws'
 import { DEFAULT_PORT } from '../shared/constants'
-import { GlobalState, SidedState } from '../shared/data/state'
+import { GlobalState, SidedState, TurtleState } from '../shared/data/state'
 import { Networker } from '../shared/net/networker'
 import { Command, run } from './command'
 import { TurtleClient } from './net/client'
@@ -10,6 +10,8 @@ import names from './names.json'
 import { Packet, PacketId } from '../shared/net/packet'
 import { EmptyPacket } from '../shared/net/empty'
 import { SaveCommand } from './command/save'
+
+const DATA_LOCATION = './hive_data.json'
 
 export class Server extends Networker implements GlobalState {
   currentId = 0
@@ -44,7 +46,7 @@ export class Server extends Networker implements GlobalState {
   }
 
   generateTurtleId (turtle: TurtleClient): string {
-    return `${names.names[Math.round(Math.random() * names.names.length)] as string}-${turtle.id}`
+    return `${names.names[Math.round(Math.random() * names.names.length)]}-${turtle.id}`
   }
 
   receive (client: TurtleClient, data: string): void {
@@ -82,6 +84,12 @@ export class Server extends Networker implements GlobalState {
 
   disconnect (socket: WebSocket): boolean {
     return this.clients.delete(socket)
+  }
+
+  getAvailableTurtles (): TurtleState[] {
+    const out: TurtleState[] = []
+    this.clients.forEach((t) => out.push(t))
+    return out
   }
 
   private load (): void {

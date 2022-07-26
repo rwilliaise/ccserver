@@ -1,7 +1,9 @@
-import { SidedState } from '../../shared/data/state'
+import { GlobalState } from '../../shared/data/state'
 
-export class Action {
+export abstract class Action {
+  abstract condition (state: GlobalState): boolean
+  abstract effect (state: GlobalState): GlobalState
+  abstract cost (state: GlobalState): number
 
-  condition(state: SidedState): void {
-  }
+  abstract execute (state: GlobalState): boolean
 }

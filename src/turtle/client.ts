@@ -20,9 +20,11 @@ export class Client extends Networker implements TurtleState, GlobalState {
   worldPosition?: Vec3
   name?: string = os.getComputerLabel()
   equipped = {}
+  registeredTasks = new Map()
 
   knownTurtles = []
   claims = []
+  taskQueue = []
   socket!: lWebSocket
   id!: number
   listeners = new ListenersTable()
@@ -31,7 +33,7 @@ export class Client extends Networker implements TurtleState, GlobalState {
     super()
     this.load()
 
-    this.listeners.set('name', (_k, _o, n) => { this.name = n as string })
+    this.listeners.on('name', (_k, _o, n) => { os.setComputerLabel(n) })
   }
 
   override registerPackets (): void {
@@ -95,6 +97,10 @@ export class Client extends Networker implements TurtleState, GlobalState {
     this.save()
   }
 
+  getAvailableTurtles (): TurtleState[] {
+    return [this]
+  }
+
   assembleState (): SidedState {
     return { turtle: this, isClient: true, global: this }
   }
@@ -115,6 +121,9 @@ export class Client extends Networker implements TurtleState, GlobalState {
     }
   }
 
+  /**
+   * Loads turtle data from a JSON file at /.hive_data
+   */
   private load (): void {
     if (!fs.exists(SAVE_LOCATION)) {
       return

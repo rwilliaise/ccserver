@@ -14,9 +14,9 @@
     "esModuleInterop": true,
     "strict": true,
     "declaration": false,
-    "strictNullChecks": true,
+    "strictNullChecks": true
   },
   "include": [
-    "./**/*.ts",
-  ],
+    ".eslintrc.js" 
+  ]
 }
