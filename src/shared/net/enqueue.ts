@@ -9,7 +9,7 @@ export class S2CEnqueuePacket extends Packet {
 
   receive (obj: object, state?: SidedState): void {
     if (state?.isClient ?? false) { return }
-    if (!matchSchema<QueuedTask>(obj, { task: TaskId.PATHFIND, data: {} })) {
+    if (!matchSchema<QueuedTask>(obj, { task: TaskId.CRAFT, data: {} })) {
       throw new Error('Malformed packet')
     }
 

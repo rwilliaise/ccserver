@@ -8,4 +8,5 @@ export interface QueuedTask {
 export interface TaskExecutor {
   registeredTasks: Map<TaskId, Task>
   taskQueue: QueuedTask[]
+  runningTasks: Set<QueuedTask>
 }

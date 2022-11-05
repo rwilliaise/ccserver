@@ -1,7 +1,7 @@
-import { TurtleState } from '../data/state'
+import { SidedState } from '../data/state'
 
 export enum TaskId {
-  PATHFIND
+  CRAFT
 }
 
 /**
@@ -10,7 +10,7 @@ export enum TaskId {
 export abstract class Task {
   abstract id: TaskId
 
-  constructor (public state: TurtleState) {}
+  constructor (public state: SidedState) {}
 
   abstract run (obj: object): void
 }

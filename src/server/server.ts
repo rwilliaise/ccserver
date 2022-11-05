@@ -66,6 +66,12 @@ export class Server extends Networker implements GlobalState {
     const ser = packet.send(data, this.assembleState(turtle))
 
     turtle.socket.send(JSON.stringify(ser))
+
+    // odd bug with @typescript-eslint/parser, where type resolution can falsely identify booleans as any
+    /* eslint-disable-next-line @typescript-eslint/strict-boolean-expressions */
+    if (packet.predicted) {
+      packet.receive(data, this.assembleState(turtle))
+    }
   }
 
   broadcast (id: PacketId, data: any): void {
@@ -108,7 +114,9 @@ export class Server extends Networker implements GlobalState {
     try {
       run(line.split(' '))
     } catch (e) {
-      console.error(e)
+      if (e instanceof Error) {
+        console.error('Error: ' + e.message)
+      }
     }
     this.interface.prompt()
   }

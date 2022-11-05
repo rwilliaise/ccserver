@@ -4,26 +4,24 @@ import { Header, PROTOCOL_VERSION } from '../../shared/constants'
 import { ListenersTable, TurtleState } from '../../shared/data/state'
 import { Vec3 } from '../../shared/math/vector'
 import { PacketId } from '../../shared/net/packet'
+import { QueuedTask } from '../../shared/task/executor'
 import { Server } from '../server'
 
 export class TurtleClient implements TurtleState {
   worldPosition?: Vec3
   auth?: string
-  name?: string
   equipped = {}
-  id: number
+  id = '<unknown>'
   listeners = new ListenersTable()
   taskQueue = []
   registeredTasks = new Map()
+  runningTasks = new Set<QueuedTask>()
 
   connectionAlive = true
 
   constructor (readonly socket: WebSocket, readonly owner: Server, request: IncomingMessage) {
-    this.id = owner.allocateId()
-    this.send(PacketId.UPDATE_TURTLE, { field: 'id', value: this.id })
-
     socket.on('close', (code, reason) => {
-      console.log(`${String(this.name)} has disconnected (${code} ${reason})`)
+      console.log(`${String(this.id)} has disconnected (${code} ${reason})`)
     })
 
     if (request.headers[Header.PROTOCOL_VERSION] !== String(PROTOCOL_VERSION)) {
@@ -36,11 +34,10 @@ export class TurtleClient implements TurtleState {
 
     if (typeof name !== 'string') {
       name = owner.generateTurtleId(this)
-      this.send(PacketId.UPDATE_TURTLE, { field: 'name', value: name })
-      this.name = name
+      this.send(PacketId.UPDATE_TURTLE, { field: 'id', value: name })
     }
 
-    console.log(`${String(this.name)} has connected!`)
+    console.log(`${String(this.id)} has connected!`)
 
     setInterval(() => {
       if (!this.connectionAlive) {

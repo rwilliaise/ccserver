@@ -2,12 +2,13 @@ import { Rect } from '../math/rect'
 import { Vec3 } from '../math/vector'
 import { TaskExecutor } from '../task/executor'
 
+type Listener<T extends keyof TurtleState> = (key: T, oldValue: TurtleState[T], newValue: TurtleState[T]) => void
+export type TurtleId = string
+
 export interface Equipped {
   right?: string
   left?: string
 }
-
-type Listener<T extends keyof TurtleState> = (key: T, oldValue: TurtleState[T], newValue: TurtleState[T]) => void
 
 export class ListenersTable extends Map<keyof TurtleState, Listener<keyof TurtleState>> {
   on<T extends keyof TurtleState>(key: T, value: Listener<T>): void {
@@ -18,9 +19,8 @@ export class ListenersTable extends Map<keyof TurtleState, Listener<keyof Turtle
 export interface TurtleState extends TaskExecutor {
   worldPosition?: Vec3
   auth?: string
-  name?: string
   equipped: Equipped
-  id: number
+  id: TurtleId
   listeners: ListenersTable
 }
 

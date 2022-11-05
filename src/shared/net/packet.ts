@@ -24,6 +24,7 @@ export interface SerializedPacket {
 export abstract class Packet {
   abstract readonly packetId: PacketId
   readonly requiresAuth: boolean = false
+  readonly predicted: boolean = true
 
   abstract receive (obj: object, state?: SidedState): void
 

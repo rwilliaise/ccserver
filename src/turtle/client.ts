@@ -1,12 +1,13 @@
 import { FatalError, Header, PROTOCOL_VERSION } from '../shared/constants'
 import { Vec3 } from '../shared/math/vector'
 import { Networker } from '../shared/net/networker'
-import { Equipped, GlobalState, ListenersTable, SidedState, TurtleState } from '../shared/data/state'
+import { Equipped, GlobalState, ListenersTable, SidedState, TurtleId, TurtleState } from '../shared/data/state'
 import { createSocket, deserializeJson, receiveSocket } from './util'
 import { matchSchema } from '../shared/data/util'
 import { Packet, PacketId } from '../shared/net/packet'
 import { deserializeVec3, SerializedVec3 } from '../shared/data/serde'
 import { S2CSavePacket } from './net/save'
+import { QueuedTask } from '../shared/task/executor'
 
 const SAVE_LOCATION = '/.hive_data'
 
@@ -18,22 +19,22 @@ interface SaveData {
 export class Client extends Networker implements TurtleState, GlobalState {
   auth?: string
   worldPosition?: Vec3
-  name?: string = os.getComputerLabel()
   equipped = {}
   registeredTasks = new Map()
+  runningTasks = new Set<QueuedTask>()
 
   knownTurtles = []
   claims = []
   taskQueue = []
   socket!: lWebSocket
-  id!: number
+  id!: TurtleId
   listeners = new ListenersTable()
 
   constructor () {
     super()
     this.load()
 
-    this.listeners.on('name', (_k, _o, n) => { os.setComputerLabel(n) })
+    this.listeners.on('id', (_k, _o, n) => { os.setComputerLabel(n) })
   }
 
   override registerPackets (): void {
