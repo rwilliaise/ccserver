@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "rootDir": "../",
+    "baseUrl": "./",
+    "lib": [
+      "ESNext"
+    ],
+    "target": "ES6",
+    "moduleResolution": "node",
+    "typeRoots": [
+      "global.d.ts"
+    ],
+    "types": [
+      "typescript-to-lua/language-extensions",
+      "lua-types/5.1",
+      "cc-tweaked-types"
+    ],
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "declaration": false,
+    "removeComments": false
+  },
+  "tstl": {
+    "luaTarget": "5.1",
+    "luaBundle": "../../lua/dist.lua",
+    "luaBundleEntry": "./src/turtle/index.ts",
+    "noHeader": true,
+    "luaLibImport": "inline"
+  },
+  "include": [
+    "./**/*.ts",
+    "./**/*.lua",
+    "../shared/**/*.ts",
+    "../shared/**/*.lua"
+  ]
+}

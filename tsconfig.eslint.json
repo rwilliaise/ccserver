@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "rootDir": "./",
+    "baseUrl": "./",
+    "lib": [
+      "ESNext"
+    ],
+    "types": [
+      "typescript-to-lua/language-extensions",
+      "lua-types/5.1",
+      "cc-tweaked-types"
+    ],
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "declaration": false,
+    "strictNullChecks": true
+  },
+  "include": [
+    ".eslintrc.js" 
+  ]
+}

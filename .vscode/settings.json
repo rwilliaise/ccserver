@@ -1,0 +1,9 @@
+{
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false,
+  "Lua.runtime.version": "Lua 5.1",
+  "standard.engine": "ts-standard",
+  "standard.autoFixOnSave": true,
+  "standard.treatErrorsAsWarnings": true,
+  "typescript.preferences.importModuleSpecifier": "relative"
+}

@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "rootDir": "./",
+    "baseUrl": "./",
+    "outDir": "../../dist/server",
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "target": "esnext",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "declaration": false
+  },
+  "include": [
+    "./**/*.ts"
+  ],
+  "references": [
+      { "path": "../shared" }
+  ],
+}
