@@ -1,0 +1,53 @@
+{
+  "names": {
+    "leader": [
+      "leader",
+      "base-to-me",
+      "all-powerful"
+    ],
+    "fodder": [
+      "asio",
+      "opengl",
+      "pthread",
+      "unique-ptr",
+      "shared-ptr",
+      "static_cast",
+
+      "turt",
+      "tort",
+      "turty",
+      "turtle",
+      "turticles",
+
+      "ninja",
+      "rafael",
+      "leonardo",
+      "donatello",
+      "michelangelo",
+
+      "mack",
+      "cecil",
+      "mario",
+      "luigi",
+      "tomato",
+
+      "rc",
+      "arc",
+      "fn",
+      "cell",
+      "i18n",
+      "fnmut",
+      "future",
+      "refcell",
+      "rustacean",
+      "mem-trasmute",
+
+      "thky",
+      "alol",
+      "bricky",
+
+      "flippy",
+      "skipper"
+    ]
+  }
+}

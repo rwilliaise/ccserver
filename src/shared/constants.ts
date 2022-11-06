@@ -11,4 +11,6 @@ export enum Header {
   NAMED = 'x-named',
 }
 
-export class FatalError extends Error {}
+export enum NetError {
+  OLD_VERSION = 'Old version!'
+}

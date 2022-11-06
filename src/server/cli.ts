@@ -21,9 +21,9 @@ void yargs
         alias: 'p',
         default: DEFAULT_PORT
       })
-  }, (args) => {
+  }, async (args) => {
     console.log('Starting server!')
-    start(args.port)
+    await start(args.port)
   })
 
   .recommendCommands()
