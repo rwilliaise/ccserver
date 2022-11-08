@@ -1,8 +1,8 @@
 import { DEFAULT_PORT } from '../shared/constants'
 import * as readline from 'node:readline/promises'
-import { ServerState } from 'server'
+import { ServerState } from './server'
 
-async function runCommands (): Promise<void> {
+async function runCommands (state: ServerState): Promise<void> {
   const read = readline.createInterface({
     output: process.stdout,
     input: process.stdin,
@@ -16,6 +16,9 @@ async function runCommands (): Promise<void> {
     if (trim.toLowerCase() === 'exit') {
       break
     }
+
+    const argv = trim.split(/ +(?=(?:(?:[^"]*"){2})*[^"]*$)/g)
+
     read.prompt()
   }
 
@@ -23,11 +26,15 @@ async function runCommands (): Promise<void> {
 }
 
 export async function start (port = DEFAULT_PORT): Promise<void> {
-  const state = new ServerState()
+  const state = new ServerState(port)
+  await state.load()
 
   await Promise.any([
-    runCommands()
+    runCommands(state)
   ])
 
+  await state.save()
+
   console.log('Shutting down!')
+  process.exit()
 }
