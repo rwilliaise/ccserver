@@ -26,7 +26,7 @@
     "@types/ws": "^8.5.3",
     "@types/yargs": "^17.0.2",
     "@typescript-eslint/eslint-plugin": "^5.42.0",
-    "cc-tweaked-types": "^0.4.0",
+    "cc-tweaked-types": "tgcGlaDius/cc-tweaked-types",
     "concurrently": "^6.2.0",
     "eslint": "^8.27.0",
     "eslint-config-standard-with-typescript": "^23.0.0",

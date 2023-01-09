@@ -1,10 +1,6 @@
 
-export interface ItemStack {
-  owner?: number
-  count: number
-  id: string
-}
+export class ItemStack {
+  owner?: string
 
-export function newStack (id: string, count = 1): ItemStack {
-  return { count, id }
+  constructor (public id: string, public count = 1) {}
 }

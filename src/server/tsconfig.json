@@ -10,7 +10,7 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "strict": true,
+    "strictNullChecks": true,
     "declaration": false
   },
   "include": [
@@ -18,5 +18,5 @@
   ],
   "references": [
       { "path": "../shared" }
-  ],
+  ]
 }

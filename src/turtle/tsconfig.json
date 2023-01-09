@@ -5,6 +5,9 @@
     "lib": [
       "ESNext"
     ],
+    "paths": {
+      "shared/*": ["../shared/*"]
+    },
     "target": "ES6",
     "moduleResolution": "node",
     "typeRoots": [
@@ -17,14 +20,14 @@
     ],
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "strict": true,
+    "strictNullChecks": true,
     "declaration": false,
     "removeComments": false
   },
   "tstl": {
     "luaTarget": "5.1",
     "luaBundle": "../../lua/dist.lua",
-    "luaBundleEntry": "./src/turtle/index.ts",
+    "luaBundleEntry": "./src/turtle/runtime.ts",
     "noHeader": true,
     "luaLibImport": "inline"
   },

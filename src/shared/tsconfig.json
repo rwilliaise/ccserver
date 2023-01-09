@@ -11,8 +11,8 @@
     "composite": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "declaration": true,
-    "strict": true,
+    "strictNullChecks": true,
+    "declaration": true
   },
   "include": [
     "./**/*.ts"
